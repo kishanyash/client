@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-textPrimary font-sans antialiased selection:bg-brand-accent selection:text-white overflow-x-hidden;
+  }
+}
+
+/* Custom Premium B2B Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8FAFC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Custom Utility Classes */
+.text-gradient-blue {
+  @apply bg-gradient-to-r from-blue-700 via-blue-600 to-emerald-600 bg-clip-text text-transparent;
+}
+
+.text-gradient-gold {
+  @apply bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 bg-clip-text text-transparent;
+}
+
+.glow-card {
+  @apply bg-brand-card border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden;
+}
+
+.glow-card::after {
+  content: '';
+  @apply absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none;
+  background: radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(37, 99, 235, 0.04) 0%, transparent 80%);
+}
+
+.premium-border {
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+/* Grid overlay background effect */
+.grid-bg {
+  background-image: 
+    linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.radial-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.07) 0%, transparent 60%);
+}
+
+/* Pause marquee scroll on hover */
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+}
