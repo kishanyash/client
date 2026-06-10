@@ -49,7 +49,7 @@ export default function Header({ activeTab, setActiveTab, onOpenQuote }) {
           onClick={() => handleNavClick('home')} 
           className="flex items-center cursor-pointer hover:opacity-90 transition-opacity"
         >
-          <UltraDLogo height={32} />
+          <UltraDLogo height={55} />
         </div>
 
         {/* Desktop Navigation */}
