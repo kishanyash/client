@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, FileDown, CheckCircle, Mail, Phone, BookOpen } from 'lucide-react';
+import { saveLead } from '../utils/leadsStorage';
 
 export default function ExitIntentPopup() {
   const [isVisible, setIsVisible] = useState(false);
@@ -32,9 +33,19 @@ export default function ExitIntentPopup() {
     e.preventDefault();
     setIsSuccess(true);
 
+    // Register the lead in the sheet (download proceeds regardless)
+    saveLead({
+      name: 'Catalogue Download',
+      email: formData.email,
+      phone: formData.phone,
+      category: 'Brochure Download (Exit Intent)',
+      qty: '-',
+      details: 'Visitor downloaded the PDF sourcing catalogue via exit-intent popup.'
+    });
+
     // Trigger PDF catalog download
     const link = document.createElement('a');
-    link.href = '/Ultra D Multiventures_Your Sourcing Partner (1).pdf';
+    link.href = '/ultra-d-corporate-catalogue.pdf';
     link.download = 'Ultra D Multiventures - Corporate Sourcing Catalogue.pdf';
     document.body.appendChild(link);
     link.click();
@@ -58,14 +69,14 @@ export default function ExitIntentPopup() {
       />
       
       {/* Pop Container */}
-      <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden z-10 animate-slideUp">
+      <div className="relative w-full max-w-md bg-white border border-brand-border rounded-3xl shadow-2xl overflow-hidden z-10 animate-slideUp">
         
         {/* Border glow stripes */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500" />
+        <div className="absolute top-0 inset-x-0 h-1 bg-blue-600" />
         
         <button 
           onClick={handleDismiss}
-          className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-655 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors"
+          className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-lg bg-slate-50 border border-brand-border hover:bg-slate-100 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
@@ -75,7 +86,7 @@ export default function ExitIntentPopup() {
             <CheckCircle className="w-14 h-14 text-emerald-600 mb-4 animate-bounce" />
             <h4 className="text-xl font-extrabold text-slate-900 mb-2">Downloading Catalogue!</h4>
             <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed font-semibold">
-              We have initiated the download of our authorized sourcing catalog. Check your browser download queue! Our corporate brochure has also been mailed to <span className="text-slate-900 font-extrabold">{formData.email}</span>.
+              We have initiated the download of our authorized sourcing catalogue — check your browser download queue. Our team will reach out to you at <span className="text-slate-900 font-extrabold">{formData.email}</span> shortly.
             </p>
           </div>
         ) : (
@@ -102,8 +113,8 @@ export default function ExitIntentPopup() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    placeholder="e.g. rohan@google.com"
-                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-250 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white text-xs font-semibold shadow-sm"
+                    placeholder="e.g. rohan@acme.com"
+                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white text-xs font-semibold shadow-sm"
                   />
                 </div>
               </div>
@@ -120,14 +131,14 @@ export default function ExitIntentPopup() {
                     value={formData.phone}
                     onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                     placeholder="e.g. +91 98765 43210"
-                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-250 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white text-xs font-semibold shadow-sm"
+                    className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white text-xs font-semibold shadow-sm"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 font-bold tracking-wide text-xs text-white transition-all flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/10"
+                className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold tracking-wide text-xs text-white transition-all flex items-center justify-center gap-1.5 shadow-md shadow-blue-500/10"
               >
                 Download PDF Catalogue <FileDown className="w-4 h-4" />
               </button>

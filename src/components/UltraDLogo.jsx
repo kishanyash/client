@@ -1,6 +1,4 @@
-import React from 'react';
-
-export default function UltraDLogo({ className = '', height = 48, showSubtitle = true }) {
+export default function UltraDLogo({ className = '', height = 48 }) {
   return (
     <img 
       src="/logo.png" 

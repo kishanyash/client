@@ -7,13 +7,28 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Override Tailwind's default blue scale with the Ultra D brand
+        // royal blue (#1A3FB8) so every blue-* utility stays on-brand.
+        blue: {
+          50: "#EEF2FB",
+          100: "#DEE6F8",
+          200: "#BFCDF1",
+          300: "#94ABE7",
+          400: "#5F7FD9",
+          500: "#3A5CC9",
+          600: "#1A3FB8",
+          700: "#15339A",
+          800: "#11297D",
+          900: "#0D1F5F",
+          950: "#081340"
+        },
         brand: {
-          bg: "#F8FAFC",       // Clean premium cool slate-50 light background
+          bg: "#E8ECF3",       // Soft cool gray-blue canvas — distinct from white cards
           card: "#FFFFFF",     // Pure white card background
           hover: "#F1F5F9",    // Hover slate-100 tone
-          accent: "#2563EB",   // High-impact royal blue
-          accentLight: "#1D4ED8", // Hover royal blue-700
-          cyan: "#0D9488",     // High contrast Teal-600
+          border: "#CBD5E5",   // Visible soft border for cards/buttons
+          accent: "#1A3FB8",   // Ultra D royal blue
+          accentLight: "#15339A", // Hover royal blue (darker)
           textPrimary: "#0F172A", // Deep Slate-900 for high text readability
           textSecondary: "#475569" // Slate-600 for subtext and descriptors
         }

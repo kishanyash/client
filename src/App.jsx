@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TrustBar from './components/TrustBar';
@@ -13,6 +13,7 @@ import SolutionsSection from './components/SolutionsSection';
 import SupplyChainSection from './components/SupplyChainSection';
 import ContactSection from './components/ContactSection';
 import AboutSection from './components/AboutSection';
+import LiquidationSection from './components/LiquidationSection';
 import QuoteModal from './components/QuoteModal';
 import ExitIntentPopup from './components/ExitIntentPopup';
 import FloatingControls from './components/FloatingControls';
@@ -39,7 +40,7 @@ export default function App() {
       <Header 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        onOpenQuote={() => handleOpenQuote({ category: 'Gifting', quantity: '100', message: 'Inquiring about bulk corporate sitemaps.' })} 
+        onOpenQuote={() => handleOpenQuote({ category: 'Gifting', quantity: '100', message: 'Inquiring about bulk corporate gifting.' })}
       />
 
       {/* Main Orchestrator */}
@@ -75,33 +76,24 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === 'products' && (
+        {activeTab === 'supply' && (
           <div className="animate-fadeIn pt-16">
             <ProductsSection onOpenQuote={handleOpenQuote} />
-          </div>
-        )}
-
-        {activeTab === 'brands' && (
-          <div className="animate-fadeIn pt-16">
-            <BrandsSection onOpenQuote={handleOpenQuote} />
-          </div>
-        )}
-
-        {activeTab === 'solutions' && (
-          <div className="animate-fadeIn pt-16">
             <SolutionsSection onOpenQuote={handleOpenQuote} />
-          </div>
-        )}
-
-        {activeTab === 'gifting' && (
-          <div className="animate-fadeIn pt-16">
             <GiftingSection onOpenQuote={handleOpenQuote} />
           </div>
         )}
 
-        {activeTab === 'operations' && (
+        {activeTab === 'distribution' && (
           <div className="animate-fadeIn pt-16">
+            <BrandsSection onOpenQuote={handleOpenQuote} />
             <SupplyChainSection onOpenQuote={handleOpenQuote} />
+          </div>
+        )}
+
+        {activeTab === 'liquidation' && (
+          <div className="animate-fadeIn pt-16">
+            <LiquidationSection />
           </div>
         )}
 
@@ -113,7 +105,7 @@ export default function App() {
       </main>
 
       {/* Footer Navigation Map */}
-      <Footer setActiveTab={setActiveTab} onOpenQuote={handleOpenQuote} />
+      <Footer setActiveTab={setActiveTab} />
 
       {/* Global Interactive Quote Request Modal */}
       <QuoteModal 
@@ -126,9 +118,7 @@ export default function App() {
       <ExitIntentPopup />
 
       {/* WhatsApp chat & Mobile controls */}
-      <FloatingControls 
-        onOpenQuote={() => handleOpenQuote()} 
-      />
+      <FloatingControls />
 
     </div>
   );

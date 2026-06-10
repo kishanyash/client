@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Sparkles, ArrowRight, LayoutGrid, CheckCircle2, ChevronRight, FileDown } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
 
 export default function GiftingSection({ onOpenQuote }) {
   const [configStep, setConfigStep] = useState(1);
@@ -56,13 +56,13 @@ export default function GiftingSection({ onOpenQuote }) {
   };
 
   return (
-    <section className="py-20 md:py-24 bg-slate-50 border-t border-slate-200 relative">
+    <section className="py-20 md:py-24 bg-brand-bg relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-            🎁 Corporate Gifting
+            Corporate Gifting
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
             Custom Gifting & <span className="text-gradient-blue">Joining Kits</span> at Scale
@@ -74,19 +74,30 @@ export default function GiftingSection({ onOpenQuote }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Left Column - Gifting Photo Showcase */}
+          {/* Left Column - Gifting Showcase */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="relative rounded-2xl border border-slate-200 bg-white p-2 overflow-hidden shadow-xl">
-              <img 
-                src="corporate_gifting.png" 
-                alt="Ultra D premium custom employee onboarding kit in open luxury black box" 
-                className="w-full h-auto rounded-xl object-cover hover:scale-[1.01] transition-transform duration-500"
-              />
+            <div className="relative rounded-3xl overflow-hidden shadow-xl bg-blue-600">
+              {/* Soft brand decorations */}
+              <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full border-[20px] border-blue-500/40" />
+              <div className="absolute -bottom-10 -left-8 w-40 h-40 rounded-full bg-blue-500/40 blur-2xl" />
+
+              <div className="relative px-6 pt-8 pb-6 flex flex-col items-center text-center">
+                <span className="text-[11px] font-black uppercase tracking-widest text-blue-100">
+                  Curated Corporate Hampers
+                </span>
+                <img
+                  src="hero-products.png"
+                  alt="Range of brandable corporate gifting products — appliances, drinkware, grooming, camera and more"
+                  className="w-full max-w-xs h-auto object-contain mt-4 drop-shadow-[0_18px_24px_rgba(8,19,64,0.35)]"
+                />
+                <p className="text-sm font-semibold text-blue-50 mt-4 leading-relaxed max-w-xs">
+                  Premium products, your logo, packed and delivered to every desk.
+                </p>
+              </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-sm">
-              <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-blue-600" />
+            <div className="bg-white border border-brand-border rounded-2xl p-5 space-y-3 shadow-sm">
+              <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider">
                 Custom Packaging Solutions
               </h4>
               <p className="text-xs text-brand-textSecondary leading-relaxed font-semibold">
@@ -103,12 +114,12 @@ export default function GiftingSection({ onOpenQuote }) {
           </div>
 
           {/* Right Column - 3 Step Configurator */}
-          <div className="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 relative shadow-lg">
+          <div className="lg:col-span-7 bg-white border border-brand-border rounded-3xl p-6 sm:p-8 relative shadow-lg">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                Configure Corporate Hamper <Sparkles className="w-4 h-4 text-blue-600" />
+              <h3 className="text-lg sm:text-xl font-extrabold text-slate-900">
+                Configure Corporate Hamper
               </h3>
-              <span className="text-xs font-bold text-slate-655 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-bold text-slate-600 bg-slate-50 border border-brand-border px-2.5 py-1 rounded-lg">
                 Step {configStep} of 3
               </span>
             </div>
@@ -125,6 +136,8 @@ export default function GiftingSection({ onOpenQuote }) {
               ))}
             </div>
 
+            {/* Step content — fixed height so the card stays the same size across all steps */}
+            <div className="min-h-[340px]">
             {/* STEP 1: Choose Product Portfolio */}
             {configStep === 1 && (
               <div className="space-y-4 animate-fadeIn">
@@ -136,8 +149,8 @@ export default function GiftingSection({ onOpenQuote }) {
                       onClick={() => handleConfigChange('itemType', cat.name)}
                       className={`text-left p-4 rounded-xl border transition-all ${
                         giftingConfig.itemType === cat.name
-                          ? 'border-blue-650 bg-blue-50/50 text-blue-800 shadow-sm'
-                          : 'border-slate-200 bg-slate-50/50 text-slate-655 hover:text-slate-900 hover:border-slate-350 hover:bg-slate-50'
+                          ? 'border-blue-700 bg-blue-50/50 text-blue-800 shadow-sm'
+                          : 'border-brand-border bg-slate-50/50 text-slate-600 hover:text-slate-900 hover:border-blue-300 hover:bg-slate-50'
                       }`}
                     >
                       <span className="font-extrabold text-sm block mb-1 text-slate-900">{cat.name}</span>
@@ -159,8 +172,8 @@ export default function GiftingSection({ onOpenQuote }) {
                       onClick={() => handleConfigChange('branding', brand.name)}
                       className={`text-left p-4 rounded-xl border transition-all ${
                         giftingConfig.branding === brand.name
-                          ? 'border-emerald-600 bg-emerald-50/40 text-emerald-800 shadow-sm'
-                          : 'border-slate-200 bg-slate-50/50 text-slate-655 hover:text-slate-900 hover:border-slate-350 hover:bg-slate-50'
+                          ? 'border-blue-700 bg-blue-50/50 text-blue-800 shadow-sm'
+                          : 'border-brand-border bg-slate-50/50 text-slate-600 hover:text-slate-900 hover:border-blue-300 hover:bg-slate-50'
                       }`}
                     >
                       <span className="font-extrabold text-sm block mb-1 text-slate-900">{brand.name}</span>
@@ -183,8 +196,8 @@ export default function GiftingSection({ onOpenQuote }) {
                         onClick={() => handleConfigChange('packaging', pack.name)}
                         className={`text-left p-4 rounded-xl border transition-all flex items-center justify-between gap-4 ${
                           giftingConfig.packaging === pack.name
-                            ? 'border-blue-650 bg-blue-50/50 text-blue-800'
-                            : 'border-slate-200 bg-slate-50/50 text-slate-655 hover:text-slate-900 hover:border-slate-350 hover:bg-slate-50'
+                            ? 'border-blue-700 bg-blue-50/50 text-blue-800'
+                            : 'border-brand-border bg-slate-50/50 text-slate-600 hover:text-slate-900 hover:border-blue-300 hover:bg-slate-50'
                         }`}
                       >
                         <div>
@@ -201,7 +214,7 @@ export default function GiftingSection({ onOpenQuote }) {
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Est. Sourcing Volume (Qty)</label>
-                    <span className="text-sm font-extrabold text-blue-650 bg-blue-50 border border-blue-100 px-3 py-1 rounded-lg">
+                    <span className="text-sm font-extrabold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1 rounded-lg">
                       {giftingConfig.volume} Kits
                     </span>
                   </div>
@@ -212,7 +225,7 @@ export default function GiftingSection({ onOpenQuote }) {
                     step="50"
                     value={giftingConfig.volume} 
                     onChange={(e) => handleConfigChange('volume', e.target.value)}
-                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 border border-slate-250"
+                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 border border-brand-border"
                   />
                   <div className="flex justify-between text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-wider">
                     <span>MOQ: 50 Kits</span>
@@ -221,13 +234,14 @@ export default function GiftingSection({ onOpenQuote }) {
                 </div>
               </div>
             )}
+            </div>
 
             {/* Configurator Footer Controls */}
             <div className="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-slate-100">
               {configStep > 1 ? (
                 <button
                   onClick={handlePrevStep}
-                  className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-800 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors"
+                  className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-800 bg-slate-50 border border-brand-border rounded-xl hover:bg-slate-100 transition-colors"
                 >
                   Back
                 </button>
@@ -245,9 +259,9 @@ export default function GiftingSection({ onOpenQuote }) {
               ) : (
                 <button
                   onClick={triggerConfigQuote}
-                  className="px-6 py-3 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 rounded-xl transition-all shadow-md hover:scale-[1.01]"
+                  className="px-6 py-3 text-xs sm:text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-md hover:scale-[1.01]"
                 >
-                  Request Hamper RFQ Proposal
+                  Get a Quote for This Hamper
                 </button>
               )}
             </div>

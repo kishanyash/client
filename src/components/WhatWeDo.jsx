@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { ShieldCheck, Layers, Gift, Award, Zap, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { ShieldCheck, Layers, Gift, Award, Zap } from 'lucide-react';
 
-export default function WhatWeDo({ setActiveTab, onOpenQuote }) {
+export default function WhatWeDo({ onOpenQuote }) {
   const [activeCard, setActiveCard] = useState(null);
 
   const pillars = [
@@ -12,16 +12,16 @@ export default function WhatWeDo({ setActiveTab, onOpenQuote }) {
       sub: 'Requirement Definition & Vendor Consolidation',
       desc: 'We solve B2B procurement pauses. We help specify precise technical metrics, consolidate vendors, negotiate network-wide pricing, and handle end-to-end purchasing pipelines.',
       bullets: ['Detailed technical audit', 'Multi-brand consolidation', 'Volume negotiated prices', 'Complete SLA compliance'],
-      tabTarget: 'solutions'
+      tabTarget: 'supply'
     },
     {
       id: 'gifting',
-      icon: <Gift className="w-6 h-6 text-emerald-600" />,
+      icon: <Gift className="w-6 h-6 text-blue-600" />,
       title: 'Promotional & Gifting',
       sub: 'Custom Branding & Premium Gift Sets',
       desc: 'High-margin corporate gifting and custom assembly at scale. We manage everything from employee joining kits, calendar sets, to custom eco-friendly hampers with bespoke packaging.',
       bullets: ['Custom logo emboss & print', 'Bespoke box & bag options', 'Individual pan-India delivery', 'Bulk stock management'],
-      tabTarget: 'gifting'
+      tabTarget: 'supply'
     },
     {
       id: 'distribution',
@@ -30,23 +30,18 @@ export default function WhatWeDo({ setActiveTab, onOpenQuote }) {
       sub: 'Exclusive National Brand Distribution',
       desc: 'Trusted national partner for leading consumer tech and lifestyle products. Elite distributor for Fuji Films, Philips LFR, and AWIPL with direct warehouse-to-dealer networks.',
       bullets: ['Exclusive channel rights', 'Large-scale inventory', 'Authentic brand warranties', 'Direct corporate supply'],
-      tabTarget: 'brands'
+      tabTarget: 'distribution'
     },
     {
       id: 'quickcommerce',
-      icon: <Zap className="w-6 h-6 text-amber-600" />,
+      icon: <Zap className="w-6 h-6 text-blue-600" />,
       title: 'Quick Commerce Supply',
       sub: 'Amazon & Q-Comm Fulfillment Nodes',
       desc: 'Specialized inventory warehousing and logistics pipelines built to feed Amazon Wholesale, large-scale commerce marketplaces, and direct quick commerce hubs.',
       bullets: ['Marketplace compliance packaging', 'Fast turnaround sorting', 'Real-time stock alerts', 'Frictionless bulk shipping'],
-      tabTarget: 'operations'
+      tabTarget: 'distribution'
     }
   ];
-
-  const handleCardAction = (target) => {
-    setActiveTab(target);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <section className="py-20 md:py-24 bg-brand-bg relative">
@@ -55,7 +50,7 @@ export default function WhatWeDo({ setActiveTab, onOpenQuote }) {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-            ⚡ What We Do
+            What We Do
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
             End-to-End <span className="text-gradient-blue">B2B Sourcing</span> Solutions
@@ -75,22 +70,30 @@ export default function WhatWeDo({ setActiveTab, onOpenQuote }) {
               className={`glow-card rounded-2xl p-8 transition-all duration-500 border ${
                 activeCard === pillar.id 
                   ? 'border-blue-200 bg-blue-50/30 shadow-lg shadow-blue-500/5 -translate-y-1' 
-                  : 'border-slate-200 bg-white shadow-sm'
+                  : 'border-brand-border bg-white shadow-sm'
               }`}
             >
               {/* Header Box */}
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center">
-                  {pillar.icon}
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 border border-brand-border flex items-center justify-center shrink-0">
+                    {pillar.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 group-hover:text-blue-700">
+                      {pillar.title}
+                    </h3>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mt-0.5">
+                      {pillar.sub}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 group-hover:text-blue-650">
-                    {pillar.title}
-                  </h3>
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mt-0.5">
-                    {pillar.sub}
-                  </span>
-                </div>
+                <button
+                  onClick={() => onOpenQuote({ category: pillar.title })}
+                  className="shrink-0 text-xs font-bold uppercase tracking-wider text-slate-800 hover:text-blue-600 px-3.5 py-1.5 rounded-lg bg-slate-50 border border-brand-border hover:bg-slate-100 hover:border-blue-300 transition-colors"
+                >
+                  Get a Quote
+                </button>
               </div>
 
               {/* Description */}
@@ -106,23 +109,6 @@ export default function WhatWeDo({ setActiveTab, onOpenQuote }) {
                     <span className="text-xs sm:text-sm text-slate-700 font-semibold">{bullet}</span>
                   </div>
                 ))}
-              </div>
-
-              {/* Actions Footer */}
-              <div className="flex items-center justify-between gap-4 mt-8 pt-6 border-t border-slate-100">
-                <button
-                  onClick={() => handleCardAction(pillar.tabTarget)}
-                  className="text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1.5 transition-colors group"
-                >
-                  Explore Capabilities 
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button
-                  onClick={() => onOpenQuote({ category: pillar.title })}
-                  className="text-xs font-bold uppercase tracking-wider text-slate-800 hover:text-blue-600 px-3.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:border-slate-350 transition-colors"
-                >
-                  Request RFQ
-                </button>
               </div>
 
             </div>

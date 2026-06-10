@@ -1,8 +1,7 @@
-import React from 'react';
-import { Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import UltraDLogo from './UltraDLogo';
 
-export default function Footer({ setActiveTab, onOpenQuote }) {
+export default function Footer({ setActiveTab }) {
   const currentYear = new Date().getFullYear();
 
   const handleNav = (tabId) => {
@@ -18,7 +17,7 @@ export default function Footer({ setActiveTab, onOpenQuote }) {
           
           {/* Brand Info Column */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center cursor-pointer hover:opacity-90 transition-opacity" onClick={() => handleNav('home')}>
+            <div className="inline-flex items-center cursor-pointer hover:opacity-90 transition-opacity bg-white rounded-xl px-4 py-2.5 shadow-sm" onClick={() => handleNav('home')}>
               <UltraDLogo height={30} />
             </div>
             
@@ -49,13 +48,20 @@ export default function Footer({ setActiveTab, onOpenQuote }) {
           <div className="lg:col-span-2 space-y-3">
             <h4 className="text-xs font-bold text-white uppercase tracking-wider">Company</h4>
             <ul className="space-y-2 text-xs sm:text-sm font-semibold">
-              {['home', 'about', 'brands', 'solutions', 'gifting'].map((item) => (
-                <li key={item}>
-                  <button 
-                    onClick={() => handleNav(item)} 
-                    className="text-slate-400 hover:text-white transition-colors capitalize text-left"
+              {[
+                { id: 'home', label: 'Home' },
+                { id: 'about', label: 'About' },
+                { id: 'supply', label: 'Corporate Supply' },
+                { id: 'distribution', label: 'Brand Distribution' },
+                { id: 'liquidation', label: 'Liquidation Expert' },
+                { id: 'contact', label: 'Contact Us' }
+              ].map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleNav(item.id)}
+                    className="text-slate-400 hover:text-white transition-colors text-left"
                   >
-                    {item === 'operations' ? 'Supply Chain' : item}
+                    {item.label}
                   </button>
                 </li>
               ))}
@@ -67,27 +73,27 @@ export default function Footer({ setActiveTab, onOpenQuote }) {
             <h4 className="text-xs font-bold text-white uppercase tracking-wider">Sourcing Portfolios</h4>
             <ul className="space-y-2 text-xs sm:text-sm font-semibold">
               <li>
-                <button onClick={() => handleNav('products')} className="text-slate-400 hover:text-white transition-colors text-left">
+                <button onClick={() => handleNav('supply')} className="text-slate-400 hover:text-white transition-colors text-left">
                   Consumer Electronics & Gadgets
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('products')} className="text-slate-400 hover:text-white transition-colors text-left">
+                <button onClick={() => handleNav('supply')} className="text-slate-400 hover:text-white transition-colors text-left">
                   Philips Home Appliances LFR
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('products')} className="text-slate-400 hover:text-white transition-colors text-left">
+                <button onClick={() => handleNav('supply')} className="text-slate-400 hover:text-white transition-colors text-left">
                   Grooming & Personal Care
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('gifting')} className="text-slate-400 hover:text-white transition-colors text-left">
+                <button onClick={() => handleNav('supply')} className="text-slate-400 hover:text-white transition-colors text-left">
                   Custom Joining Kits & hampers
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNav('products')} className="text-slate-400 hover:text-white transition-colors text-left">
+                <button onClick={() => handleNav('supply')} className="text-slate-400 hover:text-white transition-colors text-left">
                   Utilities & Eco Drinkware
                 </button>
               </li>
@@ -123,9 +129,8 @@ export default function Footer({ setActiveTab, onOpenQuote }) {
             &copy; {currentYear} Ultra D Multiventures Private Limited. All rights reserved.
           </div>
           <div className="flex gap-6">
-            <a href="#privacy" className="hover:text-white transition-colors font-semibold">Privacy Policy</a>
-            <a href="#terms" className="hover:text-white transition-colors font-semibold">Terms of Sourcing</a>
-            <a href="#compliance" className="hover:text-white transition-colors font-semibold">Corporate Compliance</a>
+            <a href="mailto:cs@ultramultiventures.co.in" className="hover:text-white transition-colors font-semibold">cs@ultramultiventures.co.in</a>
+            <a href="tel:+919820216355" className="hover:text-white transition-colors font-semibold">+91 98202 16355</a>
           </div>
         </div>
 

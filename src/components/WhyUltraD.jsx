@@ -1,5 +1,4 @@
-import React from 'react';
-import { Target, CheckCircle2, TrendingUp, Truck, Users } from 'lucide-react';
+import { Target, TrendingUp, Truck, Users } from 'lucide-react';
 
 export default function WhyUltraD({ onOpenQuote }) {
   const differentiators = [
@@ -9,12 +8,12 @@ export default function WhyUltraD({ onOpenQuote }) {
       desc: 'We are authorized national distributors for global majors including Fujifilm, Philips LFR, and AWIPL. No middlemen, pure authenticity, and full product warranty support.'
     },
     {
-      icon: <TrendingUp className="w-5 h-5 text-emerald-600" />,
+      icon: <TrendingUp className="w-5 h-5 text-blue-600" />,
       title: 'Best Sourcing Prices',
       desc: 'Our consolidated procurement network spans hundreds of vetted factories. We negotiate maximum bulk price breaks and pass the direct cost reductions down to you.'
     },
     {
-      icon: <Truck className="w-5 h-5 text-amber-600" />,
+      icon: <Truck className="w-5 h-5 text-blue-600" />,
       title: 'Nationwide Pan-India Delivery',
       desc: 'With core hubs in Mumbai, Delhi-NCR, Bangalore, and Rajasthan, our logistics channels reach Tier 1, 2, and 3 zones seamlessly. Zero logistics friction, direct-to-desktop distribution.'
     },
@@ -26,7 +25,7 @@ export default function WhyUltraD({ onOpenQuote }) {
   ];
 
   return (
-    <section className="py-20 md:py-24 bg-slate-100/60 border-t border-slate-200 relative">
+    <section className="py-20 md:py-24 bg-brand-bg relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -34,11 +33,11 @@ export default function WhyUltraD({ onOpenQuote }) {
           {/* Left Text & Stats column */}
           <div className="lg:col-span-5 space-y-6 text-center lg:text-left">
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-              🛡️ Differentiators
+              Differentiators
             </div>
             
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-none">
-              Built for <span className="text-gradient-blue">Procurement</span> That Never Pauses
+              Why Companies <span className="text-gradient-blue">Source Through Ultra&nbsp;D</span>
             </h2>
             
             <p className="text-brand-textSecondary text-base sm:text-lg font-medium">
@@ -59,7 +58,7 @@ export default function WhyUltraD({ onOpenQuote }) {
                   </div>
                   <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full"
+                      className="h-full bg-blue-600 rounded-full"
                       style={{ width: `${metric.val}%` }}
                     />
                   </div>
@@ -70,9 +69,9 @@ export default function WhyUltraD({ onOpenQuote }) {
             <div className="pt-6">
               <button
                 onClick={() => onOpenQuote({ message: 'Requesting a corporate collaboration package details.' })}
-                className="py-3 px-6 rounded-xl bg-white hover:bg-slate-50 text-sm font-bold text-slate-800 border border-slate-200 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="py-3 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-sm font-bold text-white shadow-md shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
-                Why Ultra D Multiventures
+                Enquiry
               </button>
             </div>
           </div>
@@ -82,12 +81,12 @@ export default function WhyUltraD({ onOpenQuote }) {
             {differentiators.map((diff, idx) => (
               <div 
                 key={idx}
-                className="bg-white border border-slate-200 hover:border-slate-355 hover:shadow-md p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 shadow-sm"
+                className="bg-white border border-brand-border hover:border-blue-300 hover:shadow-lg p-6 rounded-2xl transition-all duration-300 group hover:-translate-y-1 shadow-md"
               >
-                <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-10 h-10 rounded-xl bg-slate-100 border border-brand-border flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   {diff.icon}
                 </div>
-                <h3 className="text-lg font-extrabold text-slate-900 mb-2 group-hover:text-blue-650 transition-colors">
+                <h3 className="text-lg font-extrabold text-slate-900 mb-2 group-hover:text-blue-700 transition-colors">
                   {diff.title}
                 </h3>
                 <p className="text-brand-textSecondary text-xs sm:text-sm leading-relaxed font-medium">

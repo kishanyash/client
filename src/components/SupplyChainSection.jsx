@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Layers, ShieldCheck, Box, Truck, CheckCircle2, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
+import { Truck, CheckCircle2, ChevronRight } from 'lucide-react';
 
 export default function SupplyChainSection({ onOpenQuote }) {
   const [activeStep, setActiveStep] = useState(0);
@@ -38,7 +38,7 @@ export default function SupplyChainSection({ onOpenQuote }) {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-            📦 Logistics & Operations
+            Logistics & Operations
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
             Single-Point <span className="text-gradient-blue">Accountability</span> Sourcing
@@ -61,8 +61,8 @@ export default function SupplyChainSection({ onOpenQuote }) {
                   onMouseEnter={() => setActiveStep(idx)}
                   className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
                     activeStep === idx 
-                      ? 'border-blue-650 bg-blue-50/50 text-blue-800 shadow-sm' 
-                      : 'border-slate-200 bg-white text-slate-655 hover:border-slate-350 shadow-sm'
+                      ? 'border-blue-700 bg-blue-50/50 text-blue-800 shadow-sm' 
+                      : 'border-brand-border bg-white text-slate-600 hover:border-blue-300 shadow-sm'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -95,7 +95,7 @@ export default function SupplyChainSection({ onOpenQuote }) {
 
           {/* Right Column - Warehouse Image Showcase */}
           <div className="lg:col-span-6 space-y-6">
-            <div className="relative rounded-2xl border border-slate-200 bg-white p-2 overflow-hidden shadow-xl">
+            <div className="relative rounded-2xl border border-brand-border bg-white p-2 overflow-hidden shadow-xl">
               <img 
                 src="warehouse_logistics.png" 
                 alt="Ultra D high-efficiency modern warehousing logistics center" 
@@ -113,14 +113,14 @@ export default function SupplyChainSection({ onOpenQuote }) {
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 text-center shadow-sm">
+            <div className="bg-white border border-brand-border rounded-2xl p-5 text-center shadow-sm">
               <span className="block text-xs font-bold text-slate-900 uppercase tracking-widest mb-1.5">Need a logistics breakdown?</span>
               <p className="text-xs text-slate-500 leading-relaxed mb-3 font-semibold">
                 Download our corporate warehouse guidelines or request a detailed logistics layout for high-volume quick commerce supply.
               </p>
               <button 
                 onClick={() => onOpenQuote({ message: 'Requesting warehouse logistics & pan-India delivery timelines overview.' })}
-                className="py-2.5 px-6 rounded-xl bg-slate-550 hover:bg-slate-600 border border-slate-200 hover:border-slate-350 text-xs font-bold text-white transition-all shadow-sm"
+                className="py-2.5 px-6 rounded-xl bg-slate-700 hover:bg-slate-800 border border-brand-border hover:border-blue-300 text-xs font-bold text-white transition-all shadow-sm"
               >
                 Inquire Warehousing Capacity
               </button>

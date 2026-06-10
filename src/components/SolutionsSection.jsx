@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Layers, Sparkles, ShoppingCart, Building, BarChart2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { ShoppingCart, Building, BarChart2, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export default function SolutionsSection({ onOpenQuote }) {
   const [activeSegment, setActiveSegment] = useState('corporates');
@@ -18,7 +18,7 @@ export default function SolutionsSection({ onOpenQuote }) {
       quotePrefill: 'Sourcing onboarding kits / corporate rewards'
     },
     brands: {
-      icon: <BarChart2 className="w-5 h-5 text-emerald-650" />,
+      icon: <BarChart2 className="w-5 h-5 text-blue-600" />,
       title: 'For Brands & Manufacturers',
       sub: 'Scale B2B distribution and large-scale retail channel presence',
       desc: 'We partner with domestic and global manufacturers (like Fujifilm and Philips LFR) to expand their sales nodes and corporate supply footprints inside India.',
@@ -30,7 +30,7 @@ export default function SolutionsSection({ onOpenQuote }) {
       quotePrefill: 'Authorized brand distribution / LFR'
     },
     ecommerce: {
-      icon: <ShoppingCart className="w-5 h-5 text-amber-600" />,
+      icon: <ShoppingCart className="w-5 h-5 text-blue-600" />,
       title: 'For E-commerce & Q-Comm',
       sub: 'Amazon Wholesale ready supply chains & high turnaround hubs',
       desc: 'We support massive digital marketplaces and quick-commerce operators by holding inventory buffers and ensuring compliance-checked shipping.',
@@ -44,13 +44,13 @@ export default function SolutionsSection({ onOpenQuote }) {
   };
 
   return (
-    <section className="py-20 md:py-24 bg-slate-50 border-t border-slate-200 relative">
+    <section className="py-20 md:py-24 bg-slate-50 border-t border-brand-border relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-            📊 Target Solutions
+            Target Solutions
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
             Segmented <span className="text-gradient-blue">B2B Sourcing</span> Portfolios
@@ -68,8 +68,8 @@ export default function SolutionsSection({ onOpenQuote }) {
               onClick={() => setActiveSegment(key)}
               className={`flex-1 flex items-center justify-center gap-3 p-4 rounded-2xl border font-bold text-sm sm:text-base transition-all duration-300 ${
                 activeSegment === key
-                  ? 'border-blue-650 bg-blue-50/50 text-blue-800 shadow-md'
-                  : 'border-slate-200 bg-white text-slate-655 hover:text-slate-900 hover:border-slate-350'
+                  ? 'border-blue-700 bg-blue-50/50 text-blue-800 shadow-md'
+                  : 'border-brand-border bg-white text-slate-600 hover:text-slate-900 hover:border-blue-300'
               }`}
             >
               {segments[key].icon}
@@ -79,7 +79,7 @@ export default function SolutionsSection({ onOpenQuote }) {
         </div>
 
         {/* Display Active Segment Card */}
-        <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 transition-all duration-500 animate-fadeIn shadow-lg">
+        <div className="bg-white border border-brand-border rounded-3xl p-6 sm:p-10 transition-all duration-500 animate-fadeIn shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {/* Left Content column */}
@@ -97,9 +97,9 @@ export default function SolutionsSection({ onOpenQuote }) {
               <div className="pt-4">
                 <button
                   onClick={() => onOpenQuote({ category: segments[activeSegment].title, message: `Requesting a discussion on solutions: ${segments[activeSegment].sub}` })}
-                  className="py-3.5 px-6 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.01] flex items-center gap-2"
+                  className="py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-sm font-bold text-white shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.01] flex items-center gap-2"
                 >
-                  Configure Solution RFQ <ArrowRight className="w-4 h-4" />
+                  Discuss This Solution <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -112,7 +112,7 @@ export default function SolutionsSection({ onOpenQuote }) {
                 {segments[activeSegment].usecases.map((usecase, uIdx) => (
                   <div 
                     key={uIdx}
-                    className="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex gap-4 items-start hover:border-slate-350 transition-colors shadow-sm"
+                    className="p-5 bg-slate-50 border border-brand-border rounded-2xl flex gap-4 items-start hover:border-blue-300 transition-colors shadow-sm"
                   >
                     <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
                       <ShieldCheck className="w-4 h-4 text-blue-600" />

@@ -27,22 +27,19 @@
 }
 
 /* Custom Utility Classes */
+/* Brand heading accent — solid Ultra D royal blue (formerly a gradient) */
 .text-gradient-blue {
-  @apply bg-gradient-to-r from-blue-700 via-blue-600 to-emerald-600 bg-clip-text text-transparent;
-}
-
-.text-gradient-gold {
-  @apply bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-600 bg-clip-text text-transparent;
+  @apply text-blue-700;
 }
 
 .glow-card {
-  @apply bg-brand-card border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden;
+  @apply bg-brand-card border border-brand-border hover:border-blue-300 shadow-md hover:shadow-lg transition-all duration-300 relative overflow-hidden;
 }
 
 .glow-card::after {
   content: '';
   @apply absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none;
-  background: radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(37, 99, 235, 0.04) 0%, transparent 80%);
+  background: radial-gradient(400px circle at var(--x, 0px) var(--y, 0px), rgba(26, 63, 184, 0.05) 0%, transparent 80%);
 }
 
 .premium-border {
@@ -65,7 +62,7 @@
 }
 
 .radial-glow {
-  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.07) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 50%, rgba(26, 63, 184, 0.06) 0%, transparent 60%);
 }
 
 /* Pause marquee scroll on hover */

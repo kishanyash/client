@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, CheckCircle, Mail, Phone, Building, Layers, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { X, CheckCircle, Mail, Phone, Building, Layers, AlertTriangle } from 'lucide-react';
 import { saveLead } from '../utils/leadsStorage';
 
 export default function QuoteModal({ isOpen, onClose, prefilledData }) {
@@ -15,15 +15,18 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [referenceId, setReferenceId] = useState('');
 
-  useEffect(() => {
+  // Merge prefilled values into the form whenever a new prefill object
+  // is passed in (state adjustment during render, per React guidance)
+  const [lastPrefill, setLastPrefill] = useState(null);
+  if (prefilledData !== lastPrefill) {
+    setLastPrefill(prefilledData);
     if (prefilledData) {
-      setFormData(prev => ({
-        ...prev,
-        ...prefilledData
-      }));
+      setFormData(prev => ({ ...prev, ...prefilledData }));
     }
-  }, [prefilledData, isOpen]);
+  }
 
   if (!isOpen) return null;
 
@@ -35,31 +38,37 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Save to local leads database and sync to sheets
-    await saveLead(formData);
+    setIsError(false);
 
+    // Sync lead to the Google Sheet via SheetDB
+    const result = await saveLead(formData);
+
+    setIsSubmitting(false);
+
+    if (!result) {
+      setIsError(true);
+      return;
+    }
+
+    setReferenceId(result.id);
+    setIsSuccess(true);
+
+    // Auto close after 4 seconds
     setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      
-      // Auto close after 3 seconds
-      setTimeout(() => {
-        setIsSuccess(false);
-        onClose();
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          company: '',
-          category: 'Gifting',
-          quantity: '100',
-          customization: 'None',
-          message: ''
-        });
-      }, 3000);
-    }, 1200);
+      setIsSuccess(false);
+      onClose();
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        category: 'Gifting',
+        quantity: '100',
+        customization: 'None',
+        message: ''
+      });
+    }, 4000);
   };
 
   return (
@@ -71,15 +80,15 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
       />
       
       {/* Modal Box */}
-      <div className="relative w-full max-w-2xl bg-white border border-slate-250 rounded-2xl shadow-2xl overflow-hidden z-10 animate-slideUp">
+      <div className="relative w-full max-w-2xl bg-white border border-brand-border rounded-2xl shadow-2xl overflow-hidden z-10 animate-slideUp">
         
         {/* Decorative Top Glow */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500" />
+        <div className="absolute top-0 inset-x-0 h-1 bg-blue-600" />
         
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-650 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors"
+          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-lg bg-slate-50 hover:bg-slate-100 border border-brand-border transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -89,20 +98,20 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
             <CheckCircle className="w-20 h-20 text-emerald-600 animate-bounce mb-6" />
             <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Request Submitted!</h3>
             <p className="text-slate-600 font-semibold max-w-md mx-auto mb-6 leading-relaxed">
-              Thank you, <span className="text-slate-900 font-extrabold">{formData.name}</span>. Your RFQ has been logged successfully. An Ultra D Account Executive will call or email you with pricing within 24 hours.
+              Thank you, <span className="text-slate-900 font-extrabold">{formData.name}</span>. We've received your request. Our team will call or email you with pricing within one business day.
             </p>
-            <div className="text-xs text-blue-750 bg-blue-50 px-4 py-2 rounded-full border border-blue-100 font-bold shadow-sm">
-              Reference ID: UD-{Math.floor(Math.random() * 90000) + 10000}
+            <div className="text-xs text-blue-700 bg-blue-50 px-4 py-2 rounded-full border border-blue-100 font-bold shadow-sm">
+              Reference ID: {referenceId}
             </div>
           </div>
         ) : (
           <div className="p-8 max-h-[90vh] overflow-y-auto">
             <div className="mb-6">
-              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                Request Corporate Quote <Sparkles className="w-5 h-5 text-blue-600" />
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                Request a Quote
               </h2>
               <p className="text-sm text-slate-500 font-semibold mt-1">
-                Fill out the form below. For bulk corporate partnerships, exclusive prices, and customized branding.
+                Tell us what you need — products, quantities, and timelines — and we'll respond with our best pricing.
               </p>
             </div>
 
@@ -122,7 +131,7 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="e.g. Rohan Sharma"
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
                     />
                   </div>
                 </div>
@@ -140,8 +149,8 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                       required
                       value={formData.company}
                       onChange={handleChange}
-                      placeholder="e.g. Google India"
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
+                      placeholder="e.g. Acme Industries Pvt Ltd"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
                     />
                   </div>
                 </div>
@@ -161,8 +170,8 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="e.g. rohan@google.com"
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
+                      placeholder="e.g. rohan@acme.com"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
                     />
                   </div>
                 </div>
@@ -181,7 +190,7 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="e.g. +91 98765 43210"
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
                     />
                   </div>
                 </div>
@@ -199,7 +208,7 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 appearance-none focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-brand-border rounded-xl text-slate-800 appearance-none focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
                     >
                       <option value="Electronics">Electronics</option>
                       <option value="Grooming">Grooming</option>
@@ -221,7 +230,7 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                     value={formData.quantity}
                     onChange={handleChange}
                     placeholder="e.g. 250"
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
                   />
                 </div>
 
@@ -232,7 +241,7 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                     name="customization"
                     value={formData.customization}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 appearance-none focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-brand-border rounded-xl text-slate-800 appearance-none focus:outline-none focus:border-blue-500 focus:bg-white transition-colors shadow-sm text-sm font-semibold"
                   >
                     <option value="None">No Branding Required</option>
                     <option value="Logo Embossing">Logo Embossing</option>
@@ -253,15 +262,24 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Share details like preferred brands (e.g. Fujifilm, Philips), deadline, delivery locations, custom box expectations, etc..."
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors resize-none shadow-sm text-sm font-semibold leading-relaxed"
+                  className="w-full px-4 py-3 bg-slate-50 border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors resize-none shadow-sm text-sm font-semibold leading-relaxed"
                 />
               </div>
+
+              {isError && (
+                <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold leading-relaxed">
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>
+                    Something went wrong while submitting your request. Please try again, or reach us directly at <a href="tel:+919820216355" className="underline font-bold">+91 98202 16355</a> / <a href="mailto:cs@ultramultiventures.co.in" className="underline font-bold">cs@ultramultiventures.co.in</a>.
+                  </span>
+                </div>
+              )}
 
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 font-bold tracking-wide transition-all shadow-lg shadow-blue-500/10 text-white flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
+                className="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold tracking-wide transition-all shadow-lg shadow-blue-500/10 text-white flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none"
               >
                 {isSubmitting ? (
                   <>
@@ -269,10 +287,10 @@ export default function QuoteModal({ isOpen, onClose, prefilledData }) {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Processing RFQ...
+                    Sending Request...
                   </>
                 ) : (
-                  'Submit Bulk RFQ Request'
+                  'Submit Quote Request'
                 )}
               </button>
             </form>

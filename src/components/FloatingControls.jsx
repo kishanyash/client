@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowUp } from 'lucide-react';
 
-export default function FloatingControls({ onOpenQuote }) {
+export default function FloatingControls() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
@@ -20,7 +20,9 @@ export default function FloatingControls({ onOpenQuote }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const whatsappUrl = "https://wa.me/919820216355?text=Hi%20Ultra%20D%20Multiventures,%2520I%2520am%2520interested%2520in%2520corporate%2520sourcing%2520and%2520custom%2520gifting%2520solutions.";
+  const whatsappUrl = `https://wa.me/919820216355?text=${encodeURIComponent(
+    'Hi Ultra D Multiventures, I am interested in corporate sourcing and custom gifting solutions.'
+  )}`;
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
@@ -29,7 +31,7 @@ export default function FloatingControls({ onOpenQuote }) {
       {showScrollTop && (
         <button
           onClick={handleScrollTop}
-          className="p-3 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-850 rounded-full border border-slate-200 shadow-xl transition-all hover:scale-105 active:scale-95 animate-fadeIn"
+          className="p-3 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-800 rounded-full border border-brand-border shadow-xl transition-all hover:scale-105 active:scale-95 animate-fadeIn"
         >
           <ArrowUp className="w-5 h-5" />
         </button>

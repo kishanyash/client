@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import UltraDLogo from './UltraDLogo';
 
@@ -21,12 +21,10 @@ export default function Header({ activeTab, setActiveTab, onOpenQuote }) {
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'about', label: 'About' },
-    { id: 'products', label: 'Products' },
-    { id: 'brands', label: 'Brands' },
-    { id: 'solutions', label: 'Solutions' },
-    { id: 'gifting', label: 'Gifting' },
-    { id: 'operations', label: 'Supply Chain' },
-    { id: 'contact', label: 'Contact' }
+    { id: 'supply', label: 'Corporate Supply' },
+    { id: 'distribution', label: 'Brand Distribution' },
+    { id: 'liquidation', label: 'Liquidation Expert' },
+    { id: 'contact', label: 'Contact Us' }
   ];
 
   const handleNavClick = (id) => {
@@ -38,11 +36,11 @@ export default function Header({ activeTab, setActiveTab, onOpenQuote }) {
   };
 
   return (
-    <header 
-      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-md py-4' 
-          : 'bg-transparent py-6'
+    <header
+      className={`fixed top-0 inset-x-0 z-40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[padding,background-color] ${
+        isScrolled
+          ? 'bg-white/90 backdrop-blur-lg border-b border-brand-border/70 shadow-lg shadow-slate-900/5 py-3'
+          : 'bg-transparent border-b border-transparent py-6'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -60,10 +58,10 @@ export default function Header({ activeTab, setActiveTab, onOpenQuote }) {
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-300 ${
-                activeTab === item.id 
-                  ? 'text-blue-600 bg-blue-50 border border-blue-100 shadow-sm' 
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+              className={`px-3 py-1.5 text-sm font-semibold rounded-lg border transition-all duration-200 ${
+                activeTab === item.id
+                  ? 'text-blue-700 bg-blue-50 border-blue-200 shadow-sm'
+                  : 'text-slate-600 border-transparent hover:text-blue-700 hover:bg-blue-50 hover:border-blue-100'
               }`}
             >
               {item.label}
@@ -75,15 +73,15 @@ export default function Header({ activeTab, setActiveTab, onOpenQuote }) {
         <div className="flex items-center gap-3">
           <button 
             onClick={onOpenQuote}
-            className="hidden sm:flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-sm font-bold text-white transition-all shadow-md shadow-blue-500/10 hover:shadow-cyan-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            className="hidden sm:flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-sm font-bold text-white transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98]"
           >
-            Get a Quote <ArrowRight className="w-4 h-4" />
+            Enquiry <ArrowRight className="w-4 h-4" />
           </button>
 
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-slate-500 hover:text-slate-900 rounded-lg bg-slate-100 border border-slate-200 transition-colors"
+            className="lg:hidden p-2 text-slate-500 hover:text-slate-900 rounded-lg bg-slate-100 border border-brand-border transition-colors"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -92,7 +90,7 @@ export default function Header({ activeTab, setActiveTab, onOpenQuote }) {
 
       {/* Mobile drawer menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-[76px] bg-white/95 backdrop-blur-lg border-b border-slate-200 shadow-2xl py-6 px-4 animate-fadeIn">
+        <div className="lg:hidden fixed inset-x-0 top-[76px] bg-white/95 backdrop-blur-lg border-b border-brand-border shadow-2xl py-6 px-4 animate-fadeIn">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => (
               <button
@@ -112,9 +110,9 @@ export default function Header({ activeTab, setActiveTab, onOpenQuote }) {
                 setIsMobileMenuOpen(false);
                 onOpenQuote();
               }}
-              className="w-full mt-4 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-base font-bold text-white transition-all shadow-md flex items-center justify-center gap-1.5"
+              className="w-full mt-4 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-base font-bold text-white transition-all shadow-md flex items-center justify-center gap-1.5"
             >
-              Get a Quote <ArrowRight className="w-4 h-4" />
+              Enquiry <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

@@ -1,7 +1,6 @@
-import React from 'react';
-import { Target, CheckCircle2, ShieldCheck, Award, Eye, Rocket, Users } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Award, Eye, Rocket } from 'lucide-react';
 
-export default function AboutSection({ onOpenQuote }) {
+export default function AboutSection() {
   const values = [
     {
       icon: <Rocket className="w-5 h-5 text-blue-600" />,
@@ -9,12 +8,12 @@ export default function AboutSection({ onOpenQuote }) {
       desc: 'We guarantee strict adherence to timelines and quality specifications, solving the vendor delays that often plague B2B supply chains.'
     },
     {
-      icon: <Award className="w-5 h-5 text-emerald-600" />,
+      icon: <Award className="w-5 h-5 text-blue-600" />,
       title: 'Authorized Sourcing',
       desc: 'No trading duplicates. We source directly from official channels for global majors including Fujifilm, Philips LFR, and AWIPL.'
     },
     {
-      icon: <ShieldCheck className="w-5 h-5 text-amber-600" />,
+      icon: <ShieldCheck className="w-5 h-5 text-blue-600" />,
       title: 'Corporate Compliance',
       desc: 'Complete transparency. We maintain rigid compliance across tax structures, logistics licensing, and factory labor audits.'
     }
@@ -31,7 +30,7 @@ export default function AboutSection({ onOpenQuote }) {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-            ⚡ About Us
+            About Us
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-none">
             Simplifying Procurement <span className="text-gradient-blue">at Scale</span>
@@ -73,7 +72,7 @@ export default function AboutSection({ onOpenQuote }) {
           </div>
 
           {/* Right Visual Stats Column */}
-          <div className="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-6 shadow-lg">
+          <div className="lg:col-span-5 bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-lg">
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-widest border-b border-slate-100 pb-3">Operational Milestones</h4>
             
             <div className="space-y-4">
@@ -83,9 +82,9 @@ export default function AboutSection({ onOpenQuote }) {
                 { label: 'Active Corporate Clients', value: '120+ Brands' },
                 { label: 'Procurement Sourcing SLA', value: '48 Hour Proposal' }
               ].map((stat, idx) => (
-                <div key={idx} className="flex justify-between items-center bg-slate-50 border border-slate-200/80 p-4 rounded-xl">
+                <div key={idx} className="flex justify-between items-center bg-slate-50 border border-brand-border/80 p-4 rounded-xl">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{stat.label}</span>
-                  <span className="text-sm font-extrabold text-blue-650">{stat.value}</span>
+                  <span className="text-sm font-extrabold text-blue-700">{stat.value}</span>
                 </div>
               ))}
             </div>
@@ -96,7 +95,7 @@ export default function AboutSection({ onOpenQuote }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
           
           {/* Mission Card */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-8 space-y-4 hover:border-slate-350 hover:shadow-md transition-all shadow-sm">
+          <div className="bg-white border border-brand-border rounded-3xl p-8 space-y-4 hover:border-blue-300 hover:shadow-md transition-all shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center">
               <Rocket className="w-5 h-5 text-blue-600" />
             </div>
@@ -107,9 +106,9 @@ export default function AboutSection({ onOpenQuote }) {
           </div>
 
           {/* Vision Card */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-8 space-y-4 hover:border-slate-350 hover:shadow-md transition-all shadow-sm">
+          <div className="bg-white border border-brand-border rounded-3xl p-8 space-y-4 hover:border-blue-300 hover:shadow-md transition-all shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-              <Eye className="w-5 h-5 text-emerald-650" />
+              <Eye className="w-5 h-5 text-blue-600" />
             </div>
             <h3 className="text-xl font-bold text-slate-900 uppercase tracking-wide">Our Vision</h3>
             <p className="text-brand-textSecondary text-xs sm:text-sm leading-relaxed font-semibold">
@@ -120,13 +119,13 @@ export default function AboutSection({ onOpenQuote }) {
         </div>
 
         {/* Core Values grid */}
-        <div className="bg-slate-100/60 border border-slate-200 rounded-3xl p-6 sm:p-10">
+        <div className="bg-slate-100/60 border border-brand-border rounded-3xl p-6 sm:p-10">
           <h4 className="text-xs font-bold text-slate-900 uppercase tracking-widest text-center mb-8">Our Sourcing Pillars</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {values.map((v, idx) => (
               <div key={idx} className="space-y-3 p-4">
-                <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-white border border-brand-border flex items-center justify-center">
                   {v.icon}
                 </div>
                 <h5 className="font-extrabold text-slate-900 text-base">{v.title}</h5>

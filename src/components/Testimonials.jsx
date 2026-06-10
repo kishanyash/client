@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Quote, Star, Check } from 'lucide-react';
 
 export default function Testimonials() {
@@ -49,7 +49,7 @@ export default function Testimonials() {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-            💬 Testimonials
+            Testimonials
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
             Trusted by Elite Brands
@@ -60,10 +60,10 @@ export default function Testimonials() {
         </div>
 
         {/* Carousel Box */}
-        <div className="relative bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 shadow-xl">
+        <div className="relative bg-white border border-brand-border rounded-3xl p-8 sm:p-12 shadow-xl">
           
           {/* Quote Icon */}
-          <div className="absolute -top-6 left-8 sm:left-12 w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/10">
+          <div className="absolute -top-6 left-8 sm:left-12 w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
             <Quote className="w-5 h-5 text-white" />
           </div>
 
@@ -93,29 +93,33 @@ export default function Testimonials() {
                 </span>
               </div>
 
-              {/* Sourcing Achievement Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-xs font-bold text-blue-700">
-                <Check className="w-4 h-4 text-blue-600" />
-                {reviews[activeIndex].achievement}
+              <div className="flex items-center gap-3 sm:gap-4">
+                {/* Sourcing Achievement Badge */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 text-xs font-bold text-blue-700">
+                  <Check className="w-4 h-4 text-blue-600 shrink-0" />
+                  {reviews[activeIndex].achievement}
+                </div>
+
+                {/* Slider Buttons */}
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    onClick={handlePrev}
+                    aria-label="Previous testimonial"
+                    className="p-2 text-slate-600 hover:text-slate-900 rounded-lg bg-slate-50 hover:bg-slate-100 border border-brand-border transition-all hover:scale-105 active:scale-95"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    aria-label="Next testimonial"
+                    className="p-2 text-slate-600 hover:text-slate-900 rounded-lg bg-slate-50 hover:bg-slate-100 border border-brand-border transition-all hover:scale-105 active:scale-95"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
 
-          </div>
-
-          {/* Slider Buttons */}
-          <div className="absolute bottom-10 right-8 sm:right-12 flex gap-2">
-            <button 
-              onClick={handlePrev}
-              className="p-2 text-slate-655 hover:text-slate-900 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all hover:scale-105 active:scale-95"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-            <button 
-              onClick={handleNext}
-              className="p-2 text-slate-655 hover:text-slate-900 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all hover:scale-105 active:scale-95"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
 
         </div>
@@ -127,7 +131,7 @@ export default function Testimonials() {
               key={idx}
               onClick={() => setActiveIndex(idx)}
               className={`h-2 rounded-full transition-all duration-300 ${
-                activeIndex === idx ? 'w-8 bg-blue-600' : 'w-2 bg-slate-250'
+                activeIndex === idx ? 'w-8 bg-blue-600' : 'w-2 bg-slate-300'
               }`}
             />
           ))}

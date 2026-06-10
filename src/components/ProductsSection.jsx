@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, Filter, Layers, BadgeCheck, ShoppingBag, ArrowUpRight } from 'lucide-react';
 
 export default function ProductsSection({ onOpenQuote }) {
@@ -119,18 +119,18 @@ export default function ProductsSection({ onOpenQuote }) {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-xs font-bold tracking-wider text-blue-700 uppercase">
-            🛍️ Products Catalog
+            Products Catalog
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
             Explore Our Sourcing <span className="text-gradient-blue">Portfolio</span>
           </h2>
           <p className="text-brand-textSecondary text-base sm:text-lg font-medium">
-            High-volume corporate supplies, authorized electronic brands, and lifestyle accessories. Select a product to initiate a customized bulk RFQ proposal.
+            High-volume corporate supplies, authorized electronic brands, and lifestyle accessories. Select a product to request bulk pricing.
           </p>
         </div>
 
         {/* Filter Controls Panel */}
-        <div className="bg-slate-100/60 border border-slate-200 p-6 rounded-3xl mb-10 space-y-6">
+        <div className="bg-slate-100/60 border border-brand-border p-6 rounded-3xl mb-10 space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             {/* Search Input */}
@@ -143,7 +143,7 @@ export default function ProductsSection({ onOpenQuote }) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search across 5,000+ premium corporate products..."
-                className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors shadow-sm text-sm font-semibold"
+                className="w-full pl-11 pr-4 py-3 bg-white border border-brand-border rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors shadow-sm text-sm font-semibold"
               />
             </div>
 
@@ -155,7 +155,7 @@ export default function ProductsSection({ onOpenQuote }) {
               <select
                 value={selectedBrand}
                 onChange={(e) => setSelectedBrand(e.target.value)}
-                className="w-full pl-11 pr-8 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 appearance-none focus:outline-none focus:border-blue-500 transition-colors font-bold shadow-sm text-sm"
+                className="w-full pl-11 pr-8 py-3 bg-white border border-brand-border rounded-xl text-slate-800 appearance-none focus:outline-none focus:border-blue-500 transition-colors font-bold shadow-sm text-sm"
               >
                 <option value="All">All Partner Brands</option>
                 {brands.filter(b => b !== 'All').map((brand) => (
@@ -167,14 +167,14 @@ export default function ProductsSection({ onOpenQuote }) {
           </div>
 
           {/* Category Tabs */}
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
+          <div className="flex flex-wrap gap-2 pt-2 border-t border-brand-border">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all ${selectedCategory === category
                     ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-slate-655 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-brand-border'
                   }`}
               >
                 {category === 'All' ? 'All Categories' : category}
@@ -201,7 +201,7 @@ export default function ProductsSection({ onOpenQuote }) {
             {filteredCatalog.map((product) => (
               <div
                 key={product.id}
-                className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-5 flex flex-col justify-between hover:shadow-md transition-all duration-300 group shadow-sm"
+                className="bg-white border border-brand-border hover:border-blue-300 rounded-2xl p-5 flex flex-col justify-between hover:shadow-md transition-all duration-300 group shadow-sm"
               >
                 <div>
                   {/* Category & Badge */}
@@ -216,7 +216,7 @@ export default function ProductsSection({ onOpenQuote }) {
                   </div>
 
                   {/* Product Title */}
-                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 mb-2 group-hover:text-blue-650 transition-colors line-clamp-1">
+                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 mb-2 group-hover:text-blue-700 transition-colors line-clamp-1">
                     {product.name}
                   </h3>
 
@@ -241,7 +241,7 @@ export default function ProductsSection({ onOpenQuote }) {
 
                   <button
                     onClick={() => handleRequestQuote(product)}
-                    className="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-blue-600 hover:text-white text-xs font-bold text-slate-800 border border-slate-200 hover:border-transparent transition-all flex items-center justify-center gap-1 group/btn"
+                    className="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-blue-600 hover:text-white text-xs font-bold text-slate-800 border border-brand-border hover:border-transparent transition-all flex items-center justify-center gap-1 group/btn"
                   >
                     Request Quote
                     <ArrowUpRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
@@ -251,9 +251,9 @@ export default function ProductsSection({ onOpenQuote }) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white border border-slate-200 rounded-3xl">
+          <div className="text-center py-16 bg-white border border-brand-border rounded-3xl">
             <p className="text-brand-textSecondary mb-2 font-semibold">No custom sourcing items match your filter criteria.</p>
-            <p className="text-xs text-slate-550">Try modifying search tags or selecting "All Categories".</p>
+            <p className="text-xs text-slate-500">Try modifying search tags or selecting "All Categories".</p>
           </div>
         )}
 
