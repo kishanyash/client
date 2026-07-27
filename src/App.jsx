@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from './lib/supabase';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TrustBar from './components/TrustBar';
@@ -17,11 +18,27 @@ import LiquidationSection from './components/LiquidationSection';
 import QuoteModal from './components/QuoteModal';
 import ExitIntentPopup from './components/ExitIntentPopup';
 import FloatingControls from './components/FloatingControls';
+import AdminLogin from './components/AdminLogin';
+import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const [prefilledData, setPrefilledData] = useState(null);
+  const [adminSession, setAdminSession] = useState(null);
+
+  // Initialize and listen to Supabase Auth state changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setAdminSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAdminSession(session);
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
 
   const handleOpenQuote = (data = null) => {
     setPrefilledData(data);
@@ -32,6 +49,30 @@ export default function App() {
     setIsQuoteOpen(false);
     setPrefilledData(null);
   };
+
+  const handleAdminLogout = async () => {
+    await supabase.auth.signOut();
+    setAdminSession(null);
+  };
+
+  // Render Admin Portal View if activeTab is 'admin'
+  if (activeTab === 'admin') {
+    if (adminSession) {
+      return (
+        <AdminDashboard 
+          session={adminSession} 
+          onLogout={handleAdminLogout} 
+          onBackToSite={() => setActiveTab('home')} 
+        />
+      );
+    }
+    return (
+      <AdminLogin 
+        onLoginSuccess={(sess) => setAdminSession(sess)} 
+        onBackToSite={() => setActiveTab('home')} 
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-brand-bg flex flex-col justify-between selection:bg-brand-accent selection:text-white relative">
@@ -71,13 +112,13 @@ export default function App() {
         )}
 
         {activeTab === 'about' && (
-          <div className="animate-fadeIn pt-16">
+          <div className="animate-fadeIn pt-24">
             <AboutSection onOpenQuote={handleOpenQuote} />
           </div>
         )}
 
         {activeTab === 'supply' && (
-          <div className="animate-fadeIn pt-16">
+          <div className="animate-fadeIn pt-24">
             <ProductsSection onOpenQuote={handleOpenQuote} />
             <SolutionsSection onOpenQuote={handleOpenQuote} />
             <GiftingSection onOpenQuote={handleOpenQuote} />
@@ -85,20 +126,20 @@ export default function App() {
         )}
 
         {activeTab === 'distribution' && (
-          <div className="animate-fadeIn pt-16">
+          <div className="animate-fadeIn pt-24">
             <BrandsSection onOpenQuote={handleOpenQuote} />
             <SupplyChainSection onOpenQuote={handleOpenQuote} />
           </div>
         )}
 
         {activeTab === 'liquidation' && (
-          <div className="animate-fadeIn pt-16">
+          <div className="animate-fadeIn pt-24">
             <LiquidationSection />
           </div>
         )}
 
         {activeTab === 'contact' && (
-          <div className="animate-fadeIn pt-16">
+          <div className="animate-fadeIn pt-24">
             <ContactSection />
           </div>
         )}

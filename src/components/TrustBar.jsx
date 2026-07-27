@@ -1,9 +1,26 @@
+import { useState, useEffect } from 'react';
 import { BadgeCheck } from 'lucide-react';
-import { brandsData } from '../data/brandsData';
+import { fetchBrandsFromSupabase } from '../utils/supabaseBrands';
 
 export default function TrustBar() {
-  // Double the list to create a seamless infinite scroll loop
-  const marqueeItems = [...brandsData, ...brandsData];
+  const [brands, setBrands] = useState([]);
+
+  useEffect(() => {
+    fetchBrandsFromSupabase().then(dbBrands => {
+      if (dbBrands && dbBrands.length > 0) {
+        const formatted = dbBrands.map(b => ({
+          name: b.name,
+          logo: b.logo_url
+        }));
+        setBrands(formatted);
+      }
+    });
+  }, []);
+
+  // Don't render TrustBar if no brands added yet
+  if (brands.length === 0) return null;
+
+  const marqueeItems = [...brands, ...brands];
 
   return (
     <section className="bg-white py-10 border-y border-brand-border overflow-hidden relative shadow-sm">
@@ -26,7 +43,7 @@ export default function TrustBar() {
               <img
                 src={brand.logo}
                 alt={brand.name}
-                className="h-8 w-auto object-contain"
+                className="h-8 max-w-[140px] object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   if (e.target.nextSibling) {
@@ -34,7 +51,7 @@ export default function TrustBar() {
                   }
                 }}
               />
-              <span className="hidden font-extrabold text-base text-slate-800 uppercase">
+              <span className="hidden font-extrabold text-base text-slate-800 uppercase tracking-wider">
                 {brand.name}
               </span>
             </div>

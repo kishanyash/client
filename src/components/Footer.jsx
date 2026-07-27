@@ -128,9 +128,15 @@ export default function Footer({ setActiveTab }) {
           <div>
             &copy; {currentYear} Ultra D Multiventures Private Limited. All rights reserved.
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-6 items-center">
             <a href="mailto:cs@ultramultiventures.co.in" className="hover:text-white transition-colors font-semibold">cs@ultramultiventures.co.in</a>
             <a href="tel:+919820216355" className="hover:text-white transition-colors font-semibold">+91 98202 16355</a>
+            <button 
+              onClick={() => handleNav('admin')}
+              className="text-blue-400 hover:text-blue-300 font-bold bg-blue-500/10 px-2.5 py-1 rounded-md border border-blue-500/20 transition-all cursor-pointer"
+            >
+              Admin Portal
+            </button>
           </div>
         </div>
 
