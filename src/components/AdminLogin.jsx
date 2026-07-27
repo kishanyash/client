@@ -15,17 +15,14 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
     setErrorMsg('');
 
     try {
-      // 1. Try signing in via Supabase Authentication
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password
       });
 
       if (error) {
-        // Direct Master Admin Fallback Credentials check
-        if (email.trim().toLowerCase() === 'admin@ultrad.com' && password === 'admin123') {
-          onLoginSuccess({ user: { email: 'admin@ultrad.com', role: 'admin' }, isFallback: true });
-          return;
+        if (error.message.toLowerCase().includes('email not confirmed')) {
+          throw new Error('Email is not confirmed. In Supabase Dashboard -> Authentication -> Users, check "Auto Confirm User" or click "Confirm Email".');
         }
         throw new Error(error.message || 'Invalid admin credentials');
       }
