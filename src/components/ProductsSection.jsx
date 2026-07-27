@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchProductsFromSupabase } from '../utils/supabaseProducts';
-import { Search, BadgeCheck, ArrowUpRight, Image as ImageIcon, ChevronLeft, ChevronRight, Package, X, CheckCircle2, Tag } from 'lucide-react';
+import { Search, BadgeCheck, ArrowUpRight, Image as ImageIcon, ChevronLeft, ChevronRight, Package, X, CheckCircle2, Tag, Eye } from 'lucide-react';
 
 export default function ProductsSection({ onOpenQuote }) {
   const [products, setProducts] = useState([]);
@@ -223,10 +223,16 @@ export default function ProductsSection({ onOpenQuote }) {
                   </div>
 
                   {/* Bottom CTA */}
-                  <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-blue-600 flex items-center gap-1 group-hover:underline">
-                      Click to View Details
-                    </span>
+                  <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDetailModal(item);
+                      }}
+                      className="text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-50 border border-blue-100 hover:bg-blue-100 px-3 py-2 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5 text-blue-600" /> View Details
+                    </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
