@@ -7,6 +7,7 @@ import {
 import { 
   fetchProductsFromSupabase, 
   createProductInSupabase, 
+  updateProductInSupabase,
   deleteProductFromSupabase 
 } from '../utils/supabaseProducts';
 import { 
@@ -18,7 +19,7 @@ import { getLocalLeads } from '../utils/leadsStorage';
 import { 
   Search, Filter, RefreshCw, LogOut, Package, Tag, Building2, 
   Plus, Trash2, AlertCircle, FileSpreadsheet, X, Upload, 
-  Image as ImageIcon, Layers, Inbox
+  Image as ImageIcon, Layers, Inbox, Edit3
 } from 'lucide-react';
 import UltraDLogo from './UltraDLogo';
 
@@ -37,6 +38,7 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null); // null = new, object = edit
   const [newProduct, setNewProduct] = useState({
     title: '',
     category: 'Corporate Supply',
@@ -169,8 +171,36 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
     }));
   };
 
-  // Submit New Product
-  const handleCreateProduct = async (e) => {
+  // Open modal for NEW product
+  const handleOpenCreateProduct = () => {
+    setEditingProduct(null);
+    setNewProduct({
+      title: '',
+      category: 'Corporate Supply',
+      price: 'RFQ / Bulk Pricing',
+      description: '',
+      featuresStr: '',
+      images: []
+    });
+    setShowAddProductModal(true);
+  };
+
+  // Open modal for EDITING existing product
+  const handleOpenEditProduct = (product) => {
+    setEditingProduct(product);
+    setNewProduct({
+      title: product.title || '',
+      category: product.category || 'Corporate Supply',
+      price: product.price || 'RFQ / Bulk Pricing',
+      description: product.description || '',
+      featuresStr: Array.isArray(product.features) ? product.features.join('\n') : '',
+      images: Array.isArray(product.images) ? product.images : []
+    });
+    setShowAddProductModal(true);
+  };
+
+  // Submit New or Edited Product
+  const handleSaveProduct = async (e) => {
     e.preventDefault();
     if (!newProduct.title.trim()) return;
 
@@ -190,20 +220,33 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
         : ['https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800']
     };
 
-    const res = await createProductInSupabase(productPayload);
-    if (res.success) {
-      setProducts(prev => [res.product, ...prev]);
-      setShowAddProductModal(false);
-      setNewProduct({
-        title: '',
-        category: 'Corporate Supply',
-        price: 'RFQ / Bulk Pricing',
-        description: '',
-        featuresStr: '',
-        images: []
-      });
+    if (editingProduct) {
+      // Update existing product in Supabase
+      const success = await updateProductInSupabase(editingProduct.id, productPayload);
+      if (success) {
+        setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...productPayload } : p));
+        setShowAddProductModal(false);
+        setEditingProduct(null);
+      } else {
+        alert('Error updating product in database.');
+      }
     } else {
-      alert(`Error saving product: ${res.error || 'Something went wrong. Please try again.'}`);
+      // Create new product in Supabase
+      const res = await createProductInSupabase(productPayload);
+      if (res.success) {
+        setProducts(prev => [res.product, ...prev]);
+        setShowAddProductModal(false);
+        setNewProduct({
+          title: '',
+          category: 'Corporate Supply',
+          price: 'RFQ / Bulk Pricing',
+          description: '',
+          featuresStr: '',
+          images: []
+        });
+      } else {
+        alert(`Error saving product: ${res.error || 'Something went wrong. Please try again.'}`);
+      }
     }
   };
 
@@ -496,7 +539,7 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                 <p className="text-xs text-slate-400 mt-0.5">Manage products and multi-image galleries live on your website.</p>
               </div>
               <button
-                onClick={() => setShowAddProductModal(true)}
+                onClick={handleOpenCreateProduct}
                 className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-600/20 cursor-pointer"
               >
                 <Plus className="w-4 h-4" /> Add New Product
@@ -518,7 +561,7 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                     Click below to add your first product with multiple image uploads. Products will appear live on the website!
                   </p>
                   <button
-                    onClick={() => setShowAddProductModal(true)}
+                    onClick={handleOpenCreateProduct}
                     className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl"
                   >
                     Add Product Now
@@ -568,12 +611,20 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                     {/* Footer Actions */}
                     <div className="p-4 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between text-xs">
                       <span className="text-slate-500 font-mono text-[10px]">{product.id}</span>
-                      <button
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="text-red-400 hover:text-red-300 bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20 flex items-center gap-1 transition-all"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" /> Delete
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleOpenEditProduct(product)}
+                          className="text-blue-400 hover:text-blue-300 bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-500/20 flex items-center gap-1 transition-all cursor-pointer font-semibold"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(product.id)}
+                          className="text-red-400 hover:text-red-300 bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20 flex items-center gap-1 transition-all cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </div>
                     </div>
 
                   </div>
@@ -654,14 +705,16 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Package className="w-5 h-5 text-blue-400" />
-                <h3 className="text-base font-bold text-white">Add New Product</h3>
+                <h3 className="text-base font-bold text-white">
+                  {editingProduct ? `Edit Product: ${editingProduct.title}` : 'Add New Product'}
+                </h3>
               </div>
-              <button onClick={() => setShowAddProductModal(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => { setShowAddProductModal(false); setEditingProduct(null); }} className="text-slate-400 hover:text-white cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateProduct} className="space-y-4 text-xs">
+            <form onSubmit={handleSaveProduct} className="space-y-4 text-xs">
               <div>
                 <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Product Title *</label>
                 <input
@@ -753,8 +806,10 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
-                <button type="button" onClick={() => setShowAddProductModal(false)} className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl">Save Product</button>
+                <button type="button" onClick={() => { setShowAddProductModal(false); setEditingProduct(null); }} className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl cursor-pointer shadow-lg shadow-blue-600/20">
+                  {editingProduct ? 'Update Product Changes' : 'Save New Product'}
+                </button>
               </div>
             </form>
           </div>

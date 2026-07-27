@@ -31,7 +31,7 @@ export default function TrustBar() {
       <div className="max-w-7xl mx-auto px-4 text-center mb-6">
         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center justify-center gap-2">
           <BadgeCheck className="w-4 h-4 text-blue-600" />
-          Trusted National & International Sourcing Channels
+          Trusted by Elite National & International Brands
         </span>
       </div>
 
