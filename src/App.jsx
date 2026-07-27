@@ -25,7 +25,9 @@ export default function App() {
   // Detect initial route from URL
   const getInitialTab = () => {
     const path = window.location.pathname.replace(/^\//, '').toLowerCase();
-    if (path === 'admin') return 'admin';
+    if (['about', 'supply', 'distribution', 'liquidation', 'contact', 'admin'].includes(path)) {
+      return path;
+    }
     return 'home';
   };
 
