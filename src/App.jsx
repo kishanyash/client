@@ -22,7 +22,14 @@ import AdminLogin from './components/AdminLogin';
 import AdminDashboard from './components/AdminDashboard';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  // Detect initial route from URL
+  const getInitialTab = () => {
+    const path = window.location.pathname.replace(/^\//, '').toLowerCase();
+    if (path === 'admin') return 'admin';
+    return 'home';
+  };
+
+  const [activeTab, setActiveTab] = useState(getInitialTab);
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const [prefilledData, setPrefilledData] = useState(null);
   const [adminSession, setAdminSession] = useState(null);
@@ -38,6 +45,26 @@ export default function App() {
     });
 
     return () => subscription?.unsubscribe();
+  }, []);
+
+  // Sync URL with activeTab changes
+  useEffect(() => {
+    const path = activeTab === 'home' ? '/' : `/${activeTab}`;
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+    }
+  }, [activeTab]);
+
+  // Handle browser back/forward
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.replace(/^\//, '').toLowerCase();
+      if (path === 'admin') setActiveTab('admin');
+      else if (['about', 'supply', 'distribution', 'liquidation', 'contact'].includes(path)) setActiveTab(path);
+      else setActiveTab('home');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const handleOpenQuote = (data = null) => {

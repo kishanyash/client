@@ -133,13 +133,12 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
 
         {/* Access info box */}
         <div className="mt-8 pt-6 border-t border-slate-800 text-center">
-          <p className="text-xs text-slate-400">
-            Ultra D Management System • <span className="text-blue-400 font-semibold">Supabase Connected</span>
+          <p className="text-xs text-slate-500">
+            Ultra D Multi Ventures Pvt. Ltd. • Admin Management System
           </p>
-          <div className="mt-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-left text-xs text-slate-400">
-            <span className="font-semibold text-slate-300 block mb-1">🔑 Admin Credentials:</span>
-            Log in using your admin credentials: <code className="bg-slate-900 text-blue-300 px-1 py-0.5 rounded">admin@ultrad.com</code> / <code className="bg-slate-900 text-blue-300 px-1 py-0.5 rounded">admin123</code> or your Supabase user.
-          </div>
+          <p className="text-[11px] text-slate-600 mt-1">
+            Authorized personnel only. Contact IT support if you need access.
+          </p>
         </div>
 
       </div>
