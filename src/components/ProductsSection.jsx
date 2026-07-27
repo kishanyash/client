@@ -8,7 +8,7 @@ export default function ProductsSection({ onOpenQuote }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeImageIndexes, setActiveImageIndexes] = useState({});
-  const [detailProduct, setDetailProduct] = useState(null); // Selected product for detail modal
+  const [detailProduct, setDetailProduct] = useState(null);
   const [modalActiveImage, setModalActiveImage] = useState(0);
 
   useEffect(() => {
@@ -32,6 +32,18 @@ export default function ProductsSection({ onOpenQuote }) {
       setLoading(false);
     });
   }, []);
+
+  // Prevent background scrolling when Product Detail Modal is active
+  useEffect(() => {
+    if (detailProduct) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [detailProduct]);
 
   // Dynamic categories
   const allCategories = ['All', ...new Set(products.map(p => p.category).filter(Boolean))];
@@ -65,42 +77,41 @@ export default function ProductsSection({ onOpenQuote }) {
   };
 
   return (
-    <section className="py-16 bg-slate-50 relative min-h-[60vh]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    <section className="pt-2 pb-16 bg-slate-50 relative min-h-[60vh]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="text-xs font-bold text-blue-700 bg-blue-100/80 px-3 py-1 rounded-full uppercase tracking-wider">
-            Enterprise Sourcing Catalog
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Explore Verified B2B Merchandise
-          </h2>
-          <p className="text-sm sm:text-base text-slate-600">
-            Browse our dynamically updated catalog of corporate gifts, appliances, tech gadgets, and bulk supply items. Click any item for complete specifications.
-          </p>
-        </div>
+        {/* Compact Top Bar: Section Title + Search & Category Filters */}
+        <div className="bg-white p-4 md:p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          
+          <div>
+            <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-blue-100">
+              Corporate Supply Catalog
+            </span>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+              Verified B2B Merchandise
+            </h2>
+          </div>
 
-        {/* Filter Controls Bar */}
-        {products.length > 0 && (
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="relative w-full md:w-80">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+            {/* Search Input */}
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search product catalog..."
-                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:border-blue-600"
+                placeholder="Search products..."
+                className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs rounded-xl pl-10 pr-4 py-2 focus:outline-none focus:border-blue-600"
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 overflow-x-auto w-full md:w-auto">
+            {/* Category Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
               {allCategories.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
                     selectedCategory === cat 
                       ? 'bg-blue-600 text-white shadow-sm' 
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -111,19 +122,20 @@ export default function ProductsSection({ onOpenQuote }) {
               ))}
             </div>
           </div>
-        )}
+
+        </div>
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center py-16 text-slate-400">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mb-4" />
+          <div className="text-center py-12 text-slate-400">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mb-3" />
             <p className="text-sm font-semibold">Loading product catalog...</p>
           </div>
         )}
 
         {/* Empty State */}
         {!loading && products.length === 0 && (
-          <div className="text-center py-16">
+          <div className="text-center py-16 bg-white rounded-2xl border border-slate-200">
             <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-slate-700">No Products Added Yet</h3>
             <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
@@ -153,7 +165,7 @@ export default function ProductsSection({ onOpenQuote }) {
                 >
                   <div>
                     {/* Multi-Image Carousel Header */}
-                    <div className="h-56 bg-slate-100 relative overflow-hidden group/img">
+                    <div className="h-52 bg-slate-100 relative overflow-hidden group/img">
                       {totalImgs > 0 ? (
                         <img 
                           src={item.images[currentImgIndex]} 
@@ -256,7 +268,7 @@ export default function ProductsSection({ onOpenQuote }) {
       {/* ========================================================================= */}
       {detailProduct && (
         <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl relative space-y-6 my-8 border border-slate-100">
+          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl relative space-y-6 my-auto border border-slate-100 max-h-[90vh] overflow-y-auto">
             {/* Close Button */}
             <button
               onClick={() => setDetailProduct(null)}

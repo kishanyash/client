@@ -145,7 +145,7 @@ export default function App() {
         )}
 
         {activeTab === 'supply' && (
-          <div className="animate-fadeIn pt-24">
+          <div className="animate-fadeIn pt-20">
             <ProductsSection onOpenQuote={handleOpenQuote} />
             <SolutionsSection onOpenQuote={handleOpenQuote} />
             <GiftingSection onOpenQuote={handleOpenQuote} />
