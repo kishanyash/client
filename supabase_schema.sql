@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.brands (
   category VARCHAR(100) DEFAULT 'Trusted Partner',
   badge VARCHAR(100) DEFAULT 'Authorized Partner',
   reach VARCHAR(255) DEFAULT 'Pan-India Distribution',
-  desc TEXT,
+  description TEXT,
   categories_handled TEXT DEFAULT 'Corporate Supply & Gifting'
 );
 

@@ -19,7 +19,7 @@ export default function BrandsSection({ onOpenQuote }) {
           logo: b.logo_url,
           badge: b.badge || 'Authorized Partner',
           reach: b.reach || 'Pan-India Distribution',
-          desc: b.desc || `${b.name} authorized distribution channel for corporate sourcing & bulk orders.`,
+          desc: b.description || b.desc || `${b.name} authorized distribution channel for corporate sourcing & bulk orders.`,
           categories: b.categories_handled || 'Corporate Supply & Gifting',
           benefits: ['Direct OEM Invoicing', '100% Genuine Manufacturer Guarantee', 'Bulk RFQ Support']
         }));

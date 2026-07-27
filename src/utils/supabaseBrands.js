@@ -34,7 +34,7 @@ export async function createBrandInSupabase(brand) {
       category: brand.category || 'Trusted Partner',
       badge: brand.badge || 'Authorized Channel Partner',
       reach: brand.reach || 'Pan-India Corporate Fulfillment',
-      desc: brand.desc || `${brand.name} authorized distribution channel for corporate sourcing & bulk orders.`,
+      description: brand.description || brand.desc || `${brand.name} authorized distribution channel for corporate sourcing & bulk orders.`,
       categories_handled: brand.categories_handled || 'Corporate Supply & Gifting'
     };
 
