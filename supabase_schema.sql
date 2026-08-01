@@ -1,5 +1,5 @@
 -- ==============================================================================
--- ULTRA D MULTI VENTURES - COMPLETE DYNAMIC SUPABASE DATABASE SCHEMA
+-- ULTRA D MULTI VENTURES - COMPLETE DYNAMIC SUPABASE DATABASE SCHEMA & MIGRATION
 -- Execute this SQL script in your Supabase Dashboard -> SQL Editor
 -- ==============================================================================
 
@@ -45,17 +45,33 @@ CREATE TABLE IF NOT EXISTS public.brands (
   categories_handled TEXT DEFAULT 'Corporate Supply & Gifting'
 );
 
+-- Safely add columns if 'brands' table was created previously without them
+ALTER TABLE public.brands ADD COLUMN IF NOT EXISTS category VARCHAR(100) DEFAULT 'Trusted Partner';
+ALTER TABLE public.brands ADD COLUMN IF NOT EXISTS badge VARCHAR(100) DEFAULT 'Authorized Partner';
+ALTER TABLE public.brands ADD COLUMN IF NOT EXISTS reach VARCHAR(255) DEFAULT 'Pan-India Distribution';
+ALTER TABLE public.brands ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE public.brands ADD COLUMN IF NOT EXISTS categories_handled TEXT DEFAULT 'Corporate Supply & Gifting';
+
+-- Safely add columns to 'products' table if needed
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS features JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.products ADD COLUMN IF NOT EXISTS images JSONB DEFAULT '[]'::jsonb;
+
 -- Enable Row Level Security (RLS) on all tables
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.brands ENABLE ROW LEVEL SECURITY;
 
--- 4. RLS Policies
+-- Drop and recreate RLS Access Policies
+DROP POLICY IF EXISTS "Allow public all to leads" ON public.leads;
+DROP POLICY IF EXISTS "Allow public all to products" ON public.products;
+DROP POLICY IF EXISTS "Allow public all to brands" ON public.brands;
+
 CREATE POLICY "Allow public all to leads" ON public.leads FOR ALL TO public USING (true) WITH CHECK (true);
 CREATE POLICY "Allow public all to products" ON public.products FOR ALL TO public USING (true) WITH CHECK (true);
 CREATE POLICY "Allow public all to brands" ON public.brands FOR ALL TO public USING (true) WITH CHECK (true);
 
--- 5. Performance Indexes
+-- Performance Indexes
 CREATE INDEX IF NOT EXISTS idx_leads_created_at ON public.leads(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_products_created_at ON public.products(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_brands_created_at ON public.brands(created_at DESC);
+

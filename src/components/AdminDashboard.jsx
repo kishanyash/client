@@ -12,19 +12,20 @@ import {
 } from '../utils/supabaseProducts';
 import { 
   fetchBrandsFromSupabase, 
-  createBrandInSupabase, 
+  createBrandInSupabase,
+  updateBrandInSupabase,
   deleteBrandFromSupabase 
 } from '../utils/supabaseBrands';
 import { getLocalLeads } from '../utils/leadsStorage';
 import { 
   Search, Filter, RefreshCw, LogOut, Package, Tag, Building2, 
   Plus, Trash2, AlertCircle, FileSpreadsheet, X, Upload, 
-  Image as ImageIcon, Layers, Inbox, Edit3
+  Image as ImageIcon, Layers, Inbox, Edit3, Award, MapPin, CheckCircle2
 } from 'lucide-react';
 import UltraDLogo from './UltraDLogo';
 
 export default function AdminDashboard({ session, onLogout, onBackToSite }) {
-  const [activeTab, setActiveTab] = useState('inquiries'); // 'inquiries', 'products', 'brands'
+  const [activeTab, setActiveTab] = useState('inquiries'); // 'inquiries', 'products', 'brand_partners', 'trustbar'
   
   // Leads State
   const [leads, setLeads] = useState([]);
@@ -38,27 +39,29 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null); // null = new, object = edit
+  const [editingProduct, setEditingProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
     title: '',
     category: 'Corporate Supply',
     price: 'RFQ / Bulk Pricing',
     description: '',
     featuresStr: '',
-    images: [] // Array of image URLs / base64 URIs
+    images: []
   });
 
   // Brands State
   const [brands, setBrands] = useState([]);
   const [loadingBrands, setLoadingBrands] = useState(false);
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
+  const [editingBrand, setEditingBrand] = useState(null);
   const [newBrand, setNewBrand] = useState({
     name: '',
-    logo_url: ''
+    logo_url: '',
+    badge: 'Authorized Channel Partner',
+    reach: 'Pan-India Distribution',
+    categories_handled: 'Corporate Supply & Gifting',
+    description: ''
   });
-
-  // Global State
-  const [isConnected, setIsConnected] = useState(true);
 
   // Load All Data
   const loadData = async () => {
@@ -71,9 +74,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
       localBackup.forEach(item => combinedMap.set(item.id, item));
       if (dbLeads && dbLeads.length > 0) {
         dbLeads.forEach(item => combinedMap.set(item.id, item));
-        setIsConnected(true);
-      } else {
-        setIsConnected(false);
       }
       const mergedList = Array.from(combinedMap.values());
       mergedList.sort((a, b) => new Date(b.created_at || b.timestamp) - new Date(a.created_at || a.timestamp));
@@ -221,7 +221,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
     };
 
     if (editingProduct) {
-      // Update existing product in Supabase
       const success = await updateProductInSupabase(editingProduct.id, productPayload);
       if (success) {
         setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, ...productPayload } : p));
@@ -231,21 +230,12 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
         alert('Error updating product in database.');
       }
     } else {
-      // Create new product in Supabase
       const res = await createProductInSupabase(productPayload);
       if (res.success) {
         setProducts(prev => [res.product, ...prev]);
         setShowAddProductModal(false);
-        setNewProduct({
-          title: '',
-          category: 'Corporate Supply',
-          price: 'RFQ / Bulk Pricing',
-          description: '',
-          featuresStr: '',
-          images: []
-        });
       } else {
-        alert(`Error saving product: ${res.error || 'Something went wrong. Please try again.'}`);
+        alert(`Error saving product: ${res.error || 'Something went wrong.'}`);
       }
     }
   };
@@ -255,6 +245,34 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
     if (!window.confirm('Delete this product from catalog?')) return;
     setProducts(prev => prev.filter(p => p.id !== productId));
     await deleteProductFromSupabase(productId);
+  };
+
+  // Open modal for NEW Brand Partner
+  const handleOpenCreateBrand = () => {
+    setEditingBrand(null);
+    setNewBrand({
+      name: '',
+      logo_url: '',
+      badge: 'Authorized Channel Partner',
+      reach: 'Pan-India Distribution',
+      categories_handled: 'Corporate Supply & Gifting',
+      description: ''
+    });
+    setShowAddBrandModal(true);
+  };
+
+  // Open modal for EDITING Brand Partner
+  const handleOpenEditBrand = (brand) => {
+    setEditingBrand(brand);
+    setNewBrand({
+      name: brand.name || '',
+      logo_url: brand.logo_url || '',
+      badge: brand.badge || 'Authorized Channel Partner',
+      reach: brand.reach || 'Pan-India Distribution',
+      categories_handled: brand.categories_handled || 'Corporate Supply & Gifting',
+      description: brand.description || ''
+    });
+    setShowAddBrandModal(true);
   };
 
   // Handle Upload Brand Logo
@@ -268,27 +286,46 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
     reader.readAsDataURL(file);
   };
 
-  // Submit New Brand Logo
-  const handleCreateBrand = async (e) => {
+  // Save Brand Partner (Create or Update)
+  const handleSaveBrand = async (e) => {
     e.preventDefault();
     if (!newBrand.name.trim() || !newBrand.logo_url) {
-      alert('Please enter brand name and upload or paste logo image.');
+      alert('Please enter brand name and provide a logo.');
       return;
     }
 
-    const res = await createBrandInSupabase(newBrand);
-    if (res.success) {
-      setBrands(prev => [res.brand, ...prev]);
-      setShowAddBrandModal(false);
-      setNewBrand({ name: '', logo_url: '' });
+    const brandPayload = {
+      name: newBrand.name,
+      logo_url: newBrand.logo_url,
+      badge: newBrand.badge || 'Authorized Channel Partner',
+      reach: newBrand.reach || 'Pan-India Distribution',
+      categories_handled: newBrand.categories_handled || 'Corporate Supply & Gifting',
+      description: newBrand.description || `${newBrand.name} authorized distribution channel for corporate sourcing & bulk orders.`
+    };
+
+    if (editingBrand) {
+      const success = await updateBrandInSupabase(editingBrand.id, brandPayload);
+      if (success) {
+        setBrands(prev => prev.map(b => b.id === editingBrand.id ? { ...b, ...brandPayload } : b));
+        setShowAddBrandModal(false);
+        setEditingBrand(null);
+      } else {
+        alert('Error updating brand in database.');
+      }
     } else {
-      alert(`Error saving brand: ${res.error}`);
+      const res = await createBrandInSupabase(brandPayload);
+      if (res.success) {
+        setBrands(prev => [res.brand, ...prev]);
+        setShowAddBrandModal(false);
+      } else {
+        alert(`Error saving brand: ${res.error}`);
+      }
     }
   };
 
   // Delete Brand Logo
   const handleDeleteBrand = async (brandId) => {
-    if (!window.confirm('Delete this brand logo from TrustBar?')) return;
+    if (!window.confirm('Delete this brand partner?')) return;
     setBrands(prev => prev.filter(b => b.id !== brandId));
     await deleteBrandFromSupabase(brandId);
   };
@@ -354,12 +391,12 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
-        {/* Navigation Tabs (Inquiries, Products, TrustBar Logos) */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        {/* Navigation Tabs */}
+        <div className="flex items-center justify-between border-b border-slate-800 pb-4 overflow-x-auto gap-2">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('inquiries')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'inquiries' 
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
                   : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -370,7 +407,7 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
 
             <button
               onClick={() => setActiveTab('products')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
                 activeTab === 'products' 
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
                   : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
@@ -380,20 +417,31 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
             </button>
 
             <button
-              onClick={() => setActiveTab('brands')}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                activeTab === 'brands' 
+              onClick={() => setActiveTab('brand_partners')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                activeTab === 'brand_partners' 
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
                   : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
               }`}
             >
-              <Building2 className="w-4 h-4" /> TrustBar Logos ({brands.length})
+              <Building2 className="w-4 h-4 text-blue-400" /> Brand Distribution Partners ({brands.length})
+            </button>
+
+            <button
+              onClick={() => setActiveTab('trustbar')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+                activeTab === 'trustbar' 
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
+                  : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              }`}
+            >
+              <Award className="w-4 h-4 text-amber-400" /> TrustBar Ticker Logos ({brands.length})
             </button>
           </div>
 
           <button
             onClick={loadData}
-            className="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl transition-all cursor-pointer"
+            className="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl transition-all cursor-pointer shrink-0"
             title="Refresh All Data"
           >
             <RefreshCw className="w-4 h-4" />
@@ -405,7 +453,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
         {/* ========================================================================= */}
         {activeTab === 'inquiries' && (
           <div className="space-y-6 animate-fadeIn">
-            {/* Toolbar */}
             <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="relative w-full md:w-80">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -444,7 +491,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
               </div>
             </div>
 
-            {/* Inquiries Table */}
             <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs text-slate-300">
@@ -532,7 +578,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
         {/* ========================================================================= */}
         {activeTab === 'products' && (
           <div className="space-y-6 animate-fadeIn">
-            {/* Header & Add Button */}
             <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl">
               <div>
                 <h3 className="text-base font-bold text-white">Dynamic Product Catalog</h3>
@@ -546,7 +591,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
               </button>
             </div>
 
-            {/* Products Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {loadingProducts ? (
                 <div className="col-span-full py-12 text-center text-slate-400">
@@ -571,7 +615,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                 products.map((product) => (
                   <div key={product.id} className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between group hover:border-slate-700 transition-all">
                     <div>
-                      {/* Multi-image thumbnail header */}
                       <div className="h-48 bg-slate-950 relative overflow-hidden">
                         <img 
                           src={product.images?.[0] || 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800'} 
@@ -588,7 +631,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                         )}
                       </div>
 
-                      {/* Content */}
                       <div className="p-5 space-y-3">
                         <div className="flex items-start justify-between gap-2">
                           <h4 className="text-sm font-bold text-white leading-snug">{product.title}</h4>
@@ -608,7 +650,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                       </div>
                     </div>
 
-                    {/* Footer Actions */}
                     <div className="p-4 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between text-xs">
                       <span className="text-slate-500 font-mono text-[10px]">{product.id}</span>
                       <div className="flex items-center gap-2">
@@ -626,7 +667,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                         </button>
                       </div>
                     </div>
-
                   </div>
                 ))
               )}
@@ -635,43 +675,138 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 3: TRUSTBAR & BRAND LOGOS MANAGER */}
+        {/* TAB 3: BRAND DISTRIBUTION PARTNERS (RICH INFO & DETAILS) */}
         {/* ========================================================================= */}
-        {activeTab === 'brands' && (
+        {activeTab === 'brand_partners' && (
           <div className="space-y-6 animate-fadeIn">
-            {/* Header & Add Button */}
             <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl">
               <div>
-                <h3 className="text-base font-bold text-white">TrustBar Brand Logos</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Manage corporate client and brand logos scrolling on the homepage marquee.</p>
+                <h3 className="text-base font-bold text-white">Brand Distribution Partners</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Manage rich brand profile cards, coverage, badges, and operational overview for Brand Distribution page.</p>
               </div>
               <button
-                onClick={() => setShowAddBrandModal(true)}
+                onClick={handleOpenCreateBrand}
                 className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-600/20 cursor-pointer"
               >
-                <Plus className="w-4 h-4" /> Add Brand Logo
+                <Plus className="w-4 h-4" /> Add Brand Partner
               </button>
             </div>
 
-            {/* Brands Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {loadingBrands ? (
                 <div className="col-span-full py-12 text-center text-slate-400">
                   <RefreshCw className="w-6 h-6 animate-spin text-blue-400 mx-auto mb-2" />
-                  <span>Loading brand logos...</span>
+                  <span>Loading brand partners...</span>
                 </div>
               ) : brands.length === 0 ? (
                 <div className="col-span-full bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400">
                   <Building2 className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <h4 className="text-base font-bold text-slate-200">No Brands Added Yet</h4>
+                  <h4 className="text-base font-bold text-slate-200">No Brand Partners Added Yet</h4>
                   <p className="text-xs text-slate-400 max-w-md mx-auto mt-1 mb-4">
-                    Click below to add brand logos. They will appear live on the homepage marquee and brand distribution page!
+                    Click below to add brand partners with logo, authorization badge, coverage reach, and operational overview.
                   </p>
                   <button
-                    onClick={() => setShowAddBrandModal(true)}
+                    onClick={handleOpenCreateBrand}
                     className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl"
                   >
-                    Add Brand Logo Now
+                    Add Brand Partner Now
+                  </button>
+                </div>
+              ) : (
+                brands.map((brand) => (
+                  <div key={brand.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 hover:border-slate-700 transition-all flex flex-col justify-between">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="h-16 w-36 bg-slate-950 rounded-xl border border-slate-800 p-2 flex items-center justify-center">
+                          <img src={brand.logo_url} alt={brand.name} className="max-h-12 max-w-full object-contain" />
+                        </div>
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-400 bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded-md">
+                          {brand.badge || 'Authorized Partner'}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h4 className="text-lg font-extrabold text-white">{brand.name}</h4>
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5 font-medium">
+                          <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                          <span>Coverage: {brand.reach || 'Pan-India Distribution'}</span>
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 space-y-2 text-xs">
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Categories Handled:</span>
+                          <span className="text-slate-200 font-semibold">{brand.categories_handled || 'Corporate Supply & Gifting'}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Operational Overview:</span>
+                          <p className="text-slate-300 text-xs leading-relaxed line-clamp-2">
+                            {brand.description || `${brand.name} authorized distribution channel for corporate sourcing & bulk orders.`}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+                      <span className="text-slate-500 font-mono text-[10px]">{brand.id}</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleOpenEditBrand(brand)}
+                          className="text-blue-400 hover:text-blue-300 bg-blue-500/10 px-3 py-1 rounded-lg border border-blue-500/20 flex items-center gap-1 font-semibold"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit Profile
+                        </button>
+                        <button
+                          onClick={() => handleDeleteBrand(brand.id)}
+                          className="text-red-400 hover:text-red-300 bg-red-500/10 px-3 py-1 rounded-lg border border-red-500/20 flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 4: TRUSTBAR TICKER LOGOS MANAGER */}
+        {/* ========================================================================= */}
+        {activeTab === 'trustbar' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+              <div>
+                <h3 className="text-base font-bold text-white">TrustBar Homepage Marquee Logos</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Quickly view & manage brand logos scrolling on the homepage marquee ticker.</p>
+              </div>
+              <button
+                onClick={handleOpenCreateBrand}
+                className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-600/20 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" /> Add Ticker Logo
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {loadingBrands ? (
+                <div className="col-span-full py-12 text-center text-slate-400">
+                  <RefreshCw className="w-6 h-6 animate-spin text-blue-400 mx-auto mb-2" />
+                  <span>Loading ticker logos...</span>
+                </div>
+              ) : brands.length === 0 ? (
+                <div className="col-span-full bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400">
+                  <Award className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                  <h4 className="text-base font-bold text-slate-200">No Marquee Logos Added Yet</h4>
+                  <p className="text-xs text-slate-400 max-w-md mx-auto mt-1 mb-4">
+                    Click below to add brand logos. They will scroll live on the homepage ticker bar!
+                  </p>
+                  <button
+                    onClick={handleOpenCreateBrand}
+                    className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl"
+                  >
+                    Add Logo Now
                   </button>
                 </div>
               ) : (
@@ -697,7 +832,7 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
       </main>
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD PRODUCT WITH MULTI-IMAGE SUPPORT */}
+      {/* MODAL: ADD / EDIT PRODUCT */}
       {/* ========================================================================= */}
       {showAddProductModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
@@ -775,7 +910,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                 />
               </div>
 
-              {/* Multi-Image File Uploader */}
               <div>
                 <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Upload Product Images (Multiple allowed)</label>
                 <div className="flex items-center gap-3">
@@ -786,7 +920,6 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                   <span className="text-[11px] text-slate-400">{newProduct.images.length} image(s) selected</span>
                 </div>
 
-                {/* Live Image Previews */}
                 {newProduct.images.length > 0 && (
                   <div className="grid grid-cols-4 gap-2 mt-3 p-3 bg-slate-950 rounded-xl border border-slate-800">
                     {newProduct.images.map((img, i) => (
@@ -817,48 +950,84 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL: ADD BRAND LOGO */}
+      {/* MODAL: ADD / EDIT BRAND DISTRIBUTION PARTNER (WITH RICH DETAILS) */}
       {/* ========================================================================= */}
       {showAddBrandModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-5 my-8">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-blue-400" />
                 <div>
-                  <h3 className="text-base font-bold text-white">Add Brand (Syncs Site-Wide)</h3>
+                  <h3 className="text-base font-bold text-white">
+                    {editingBrand ? `Edit Brand Partner: ${editingBrand.name}` : 'Add Brand Partner'}
+                  </h3>
                   <p className="text-[11px] text-blue-400 font-semibold">
-                    ✨ Upload once — automatically syncs to both TrustBar marquee & Brand Distribution!
+                    Configure rich details for Brand Distribution page and sync logo with homepage marquee.
                   </p>
                 </div>
               </div>
-              <button onClick={() => setShowAddBrandModal(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => { setShowAddBrandModal(false); setEditingBrand(null); }} className="text-slate-400 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateBrand} className="space-y-4 text-xs">
-              <div>
-                <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Brand Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={newBrand.name}
-                  onChange={(e) => setNewBrand({ ...newBrand, name: e.target.value })}
-                  placeholder="e.g. Philips, Sony, Samsung, Welspun"
-                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-blue-500"
-                />
+            <form onSubmit={handleSaveBrand} className="space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Brand Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newBrand.name}
+                    onChange={(e) => setNewBrand({ ...newBrand, name: e.target.value })}
+                    placeholder="e.g. Philips, Sony, Samsung, Welspun"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Authorization Badge *</label>
+                  <input
+                    type="text"
+                    value={newBrand.badge}
+                    onChange={(e) => setNewBrand({ ...newBrand, badge: e.target.value })}
+                    placeholder="e.g. Authorized Channel Partner"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3.5 py-2.5 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Coverage / Distribution Reach *</label>
+                  <input
+                    type="text"
+                    value={newBrand.reach}
+                    onChange={(e) => setNewBrand({ ...newBrand, reach: e.target.value })}
+                    placeholder="e.g. Pan-India Distribution"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3.5 py-2.5 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Categories Handled *</label>
+                  <input
+                    type="text"
+                    value={newBrand.categories_handled}
+                    onChange={(e) => setNewBrand({ ...newBrand, categories_handled: e.target.value })}
+                    placeholder="e.g. Consumer Electronics & Appliances"
+                    className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3.5 py-2.5 focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Upload Logo Image or Paste URL *</label>
+                <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Upload Brand Logo Image or Paste URL *</label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleBrandLogoUpload}
-                  className="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl px-3 py-2"
+                  className="w-full bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl px-3 py-2 mb-1"
                 />
-                <p className="text-[11px] text-slate-500 my-1">or paste image URL below:</p>
                 <input
                   type="text"
                   value={newBrand.logo_url}
@@ -874,17 +1043,29 @@ export default function AdminDashboard({ session, onLogout, onBackToSite }) {
                 </div>
               )}
 
+              <div>
+                <label className="block font-medium text-slate-300 uppercase tracking-wider mb-1">Operational Overview / Brand Description</label>
+                <textarea
+                  rows={3}
+                  value={newBrand.description}
+                  onChange={(e) => setNewBrand({ ...newBrand, description: e.target.value })}
+                  placeholder="Official authorized distribution overview, genuine manufacturer warranty terms, and bulk fulfillment capability..."
+                  className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-3.5 py-2.5 focus:outline-none"
+                />
+              </div>
+
               <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
-                <button type="button" onClick={() => setShowAddBrandModal(false)} className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
-                <button type="submit" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl">Save Brand Logo</button>
+                <button type="button" onClick={() => { setShowAddBrandModal(false); setEditingBrand(null); }} className="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Cancel</button>
+                <button type="submit" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl">
+                  {editingBrand ? 'Save Brand Partner Updates' : 'Save Brand Partner'}
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-
-
     </div>
   );
 }
+

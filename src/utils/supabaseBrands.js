@@ -56,6 +56,29 @@ export async function createBrandInSupabase(brand) {
 }
 
 /**
+ * Update an existing brand entry in Supabase.
+ */
+export async function updateBrandInSupabase(id, updates) {
+  try {
+    const { data, error } = await supabase
+      .from('brands')
+      .update(updates)
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.error('Supabase update brand error:', error.message);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Error updating brand in Supabase:', err);
+    return false;
+  }
+}
+
+/**
  * Delete a brand from Supabase.
  */
 export async function deleteBrandFromSupabase(id) {
@@ -76,3 +99,4 @@ export async function deleteBrandFromSupabase(id) {
     return false;
   }
 }
+
